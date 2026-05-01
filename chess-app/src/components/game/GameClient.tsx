@@ -22,7 +22,7 @@ export default function GameClient({ modelId }: GameClientProps) {
   const opponent = AI_OPPONENTS.find((o) => o.id === modelId)
   const gameHook = useChessGame()
   const { state, makeMove, resetGame } = gameHook
-  const { recordGame } = usePlayerProfile()
+  const { recordGame, profile } = usePlayerProfile()
 
   const [isAIThinking, setIsAIThinking] = useState(false)
   const [aiInsight, setAiInsight] = useState('')
@@ -254,13 +254,13 @@ export default function GameClient({ modelId }: GameClientProps) {
 
           {/* Human Player (bottom) */}
           <PlayerCard
-            name="You"
+            name={profile.username}
             isAI={false}
             isThinking={false}
             timeLeft={playerTime}
             isActive={playerIsActive && !isAIThinking}
-            elo={1200}
-            iconName="person"
+            elo={profile.elo}
+            avatarUrl={profile.avatarUrl}
           />
         </div>
 

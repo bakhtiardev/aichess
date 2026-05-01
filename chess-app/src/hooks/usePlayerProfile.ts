@@ -19,6 +19,12 @@ export interface PlayerProfile {
   draws: number
   recentMatches: GameRecord[]
   ratingHistory: number[]
+  chessComUsername?: string
+  avatarUrl?: string
+  chessComStats?: {
+    rapid?: { elo: number, wins: number, losses: number, draws: number }
+    blitz?: { elo: number, wins: number, losses: number, draws: number }
+  }
 }
 
 const DEFAULT_PROFILE: PlayerProfile = {
@@ -91,5 +97,57 @@ export function usePlayerProfile() {
   const totalGames = profile.wins + profile.losses + profile.draws
   const winRate = totalGames > 0 ? Math.round((profile.wins / totalGames) * 100) : 0
 
-  return { profile, recordGame, winRate, totalGames, saveProfile }
+  const syncWithChessCom = useCallback(async (username: string) => {
+    try {
+      const [profileRes, statsRes] = await Promise.all([
+        fetch(`https://api.chess.com/pub/player/${username}`, {
+          headers: { 'User-Agent': 'Grandmaster-AI-Chess-Arena/1.0 (contact: github.com/bakhtiar)' }
+        }),
+        fetch(`https://api.chess.com/pub/player/${username}/stats`, {
+          headers: { 'User-Agent': 'Grandmaster-AI-Chess-Arena/1.0 (contact: github.com/bakhtiar)' }
+        })
+      ])
+
+      if (!profileRes.ok || !statsRes.ok) {
+        throw new Error('User not found or API error')
+      }
+
+      const profileData = await profileRes.json()
+      const statsData = await statsRes.json()
+
+      const rapid = statsData.chess_rapid ? {
+        elo: statsData.chess_rapid.last.rating,
+        wins: statsData.chess_rapid.record.win,
+        losses: statsData.chess_rapid.record.loss,
+        draws: statsData.chess_rapid.record.draw,
+      } : undefined
+
+      const blitz = statsData.chess_blitz ? {
+        elo: statsData.chess_blitz.last.rating,
+        wins: statsData.chess_blitz.record.win,
+        losses: statsData.chess_blitz.record.loss,
+        draws: statsData.chess_blitz.record.draw,
+      } : undefined
+
+      const updated: PlayerProfile = {
+        ...profile,
+        username: profileData.username,
+        chessComUsername: profileData.username,
+        avatarUrl: profileData.avatar,
+        chessComStats: { rapid, blitz }
+      }
+      
+      // Update local elo if rapid or blitz exists (prefer rapid)
+      if (rapid) updated.elo = rapid.elo
+      else if (blitz) updated.elo = blitz.elo
+
+      saveProfile(updated)
+      return { success: true }
+    } catch (err: any) {
+      console.error('Failed to sync with Chess.com:', err)
+      return { success: false, error: err.message }
+    }
+  }, [profile, saveProfile])
+
+  return { profile, recordGame, winRate, totalGames, saveProfile, syncWithChessCom }
 }

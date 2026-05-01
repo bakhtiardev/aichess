@@ -8,6 +8,7 @@ interface PlayerCardProps {
   isActive: boolean
   iconName?: string
   elo?: number
+  avatarUrl?: string
 }
 
 function formatTime(seconds: number): string {
@@ -24,6 +25,7 @@ export default function PlayerCard({
   isActive,
   iconName = 'person',
   elo,
+  avatarUrl,
 }: PlayerCardProps) {
   return (
     <div
@@ -35,15 +37,19 @@ export default function PlayerCard({
       <div className="flex items-center gap-3">
         {/* Avatar */}
         <div
-          className={`w-9 h-9 rounded-lg flex items-center justify-center border transition-colors ${isActive ? 'border-primary/40 bg-primary/10' : 'border-outline-variant bg-surface-bright'
+          className={`w-9 h-9 rounded-lg flex items-center justify-center border transition-colors overflow-hidden ${isActive ? 'border-primary/40 bg-primary/10' : 'border-outline-variant bg-surface-bright'
             }`}
         >
-          <span
-            className={`material-symbols-outlined text-[18px] ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            {isAI ? 'smart_toy' : iconName}
-          </span>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span
+              className={`material-symbols-outlined text-[18px] ${isActive ? 'text-primary' : 'text-on-surface-variant'}`}
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              {isAI ? 'smart_toy' : iconName}
+            </span>
+          )}
         </div>
 
         {/* Name & Status */}

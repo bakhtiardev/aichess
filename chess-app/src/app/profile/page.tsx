@@ -57,6 +57,26 @@ export default function ProfilePage() {
     ? history[history.length - 1] - history[history.length - 2]
     : 0
 
+  // Use Chess.com stats if available, otherwise local AI stats
+  const displayTotalGames = profile.chessComStats 
+    ? (profile.chessComStats.rapid?.wins || 0) + (profile.chessComStats.rapid?.losses || 0) + (profile.chessComStats.rapid?.draws || 0) +
+      (profile.chessComStats.blitz?.wins || 0) + (profile.chessComStats.blitz?.losses || 0) + (profile.chessComStats.blitz?.draws || 0)
+    : totalGames
+
+  const displayWins = profile.chessComStats 
+    ? (profile.chessComStats.rapid?.wins || 0) + (profile.chessComStats.blitz?.wins || 0)
+    : profile.wins
+    
+  const displayLosses = profile.chessComStats 
+    ? (profile.chessComStats.rapid?.losses || 0) + (profile.chessComStats.blitz?.losses || 0)
+    : profile.losses
+    
+  const displayDraws = profile.chessComStats 
+    ? (profile.chessComStats.rapid?.draws || 0) + (profile.chessComStats.blitz?.draws || 0)
+    : profile.draws
+
+  const displayWinRate = displayTotalGames > 0 ? Math.round((displayWins / displayTotalGames) * 100) : 0
+
   return (
     <div className="flex flex-col h-full">
       <TopBar title="Chess AI Hub" subtitle="Profile" />
@@ -69,11 +89,15 @@ export default function ProfilePage() {
             <div className="absolute -top-16 -left-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
             <div className="flex items-center gap-5 z-10">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center border-2 border-primary shadow-lg">
-                  <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    person
-                  </span>
-                </div>
+                {profile.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt="Avatar" className="w-20 h-20 rounded-full border-2 border-primary shadow-lg object-cover" />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center border-2 border-primary shadow-lg">
+                    <span className="material-symbols-outlined text-on-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      person
+                    </span>
+                  </div>
+                )}
                 <div className="absolute -bottom-1 -right-1 bg-surface-container-high text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/30">
                   {profile.elo >= 2000 ? 'GM' : profile.elo >= 1800 ? 'IM' : profile.elo >= 1600 ? 'FM' : 'Club'}
                 </div>
@@ -84,13 +108,27 @@ export default function ProfilePage() {
                   <span className="material-symbols-outlined text-primary text-xl" title="Verified">verified</span>
                 </h1>
                 <div className="flex flex-wrap items-center gap-3 mt-1.5">
-                  <span className="flex items-center gap-1 text-body-sm text-primary font-semibold">
-                    <span className="material-symbols-outlined text-base">monitoring</span>
-                    ELO: {profile.elo}
-                  </span>
+                  {profile.chessComStats?.rapid && (
+                    <span className="flex items-center gap-1 text-body-sm text-primary font-semibold">
+                      <span className="material-symbols-outlined text-base">timer</span>
+                      Rapid: {profile.chessComStats.rapid.elo}
+                    </span>
+                  )}
+                  {profile.chessComStats?.blitz && (
+                    <span className="flex items-center gap-1 text-body-sm text-secondary font-semibold">
+                      <span className="material-symbols-outlined text-base">bolt</span>
+                      Blitz: {profile.chessComStats.blitz.elo}
+                    </span>
+                  )}
+                  {!profile.chessComStats && (
+                    <span className="flex items-center gap-1 text-body-sm text-primary font-semibold">
+                      <span className="material-symbols-outlined text-base">monitoring</span>
+                      ELO: {profile.elo}
+                    </span>
+                  )}
                   <span className="flex items-center gap-1 text-body-sm text-on-surface-variant">
                     <span className="material-symbols-outlined text-base">calendar_today</span>
-                    {totalGames} games played
+                    {displayTotalGames} games played
                   </span>
                 </div>
               </div>
@@ -111,6 +149,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Stats */}
             <div className="lg:col-span-8 space-y-4">
+
               {/* Performance */}
               <div className="bg-surface-container-low border border-outline-variant rounded-xl p-6">
                 <h2 className="text-headline-md font-bold text-on-surface flex items-center gap-2 mb-6">
@@ -134,7 +173,7 @@ export default function ProfilePage() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-bold text-on-surface">{winRate}%</span>
+                      <span className="text-2xl font-bold text-on-surface">{displayWinRate}%</span>
                       <span className="text-[10px] text-on-surface-variant">Win Rate</span>
                     </div>
                   </div>
@@ -142,25 +181,25 @@ export default function ProfilePage() {
                   {/* W/D/L breakdown */}
                   <div className="flex-1 max-w-xs w-full space-y-3">
                     <div className="flex justify-between text-label-bold font-bold text-on-surface">
-                      <span>Record</span>
-                      <span>{totalGames} Games</span>
+                      <span>Record {profile.chessComStats && '(Chess.com)'}</span>
+                      <span>{displayTotalGames} Games</span>
                     </div>
                     <div className="h-3 w-full flex rounded-full overflow-hidden border border-outline-variant bg-surface">
-                      {totalGames > 0 && (
+                      {displayTotalGames > 0 && (
                         <>
-                          <div className="h-full bg-primary" style={{ width: `${(profile.wins / totalGames) * 100}%` }} title={`Wins: ${profile.wins}`} />
-                          <div className="h-full bg-surface-variant border-x border-background" style={{ width: `${(profile.draws / totalGames) * 100}%` }} title={`Draws: ${profile.draws}`} />
-                          <div className="h-full bg-error" style={{ width: `${(profile.losses / totalGames) * 100}%` }} title={`Losses: ${profile.losses}`} />
+                          <div className="h-full bg-primary" style={{ width: `${(displayWins / displayTotalGames) * 100}%` }} title={`Wins: ${displayWins}`} />
+                          <div className="h-full bg-surface-variant border-x border-background" style={{ width: `${(displayDraws / displayTotalGames) * 100}%` }} title={`Draws: ${displayDraws}`} />
+                          <div className="h-full bg-error" style={{ width: `${(displayLosses / displayTotalGames) * 100}%` }} title={`Losses: ${displayLosses}`} />
                         </>
                       )}
-                      {totalGames === 0 && (
+                      {displayTotalGames === 0 && (
                         <div className="h-full w-full bg-surface-variant" />
                       )}
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary inline-block" /> {profile.wins}W</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-surface-variant inline-block" /> {profile.draws}D</span>
-                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-error inline-block" /> {profile.losses}L</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-primary inline-block" /> {displayWins}W</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-surface-variant inline-block" /> {displayDraws}D</span>
+                      <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-error inline-block" /> {displayLosses}L</span>
                     </div>
                   </div>
                 </div>
@@ -168,7 +207,7 @@ export default function ProfilePage() {
 
               <div className="bg-surface-container-low border border-outline-variant rounded-xl p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-label-bold font-bold text-on-surface-variant uppercase tracking-wider">Rating History</h3>
+                  <h3 className="text-label-bold font-bold text-on-surface-variant uppercase tracking-wider">Local AI Rating History</h3>
                   <span className={`text-headline-md font-bold ${latestChange >= 0 ? 'text-primary' : 'text-error'}`}>
                     {latestChange >= 0 ? '+' : ''}{latestChange}
                   </span>
@@ -291,7 +330,7 @@ export default function ProfilePage() {
               </h2>
               <div className="flex flex-col gap-3 overflow-y-auto">
                 {ACHIEVEMENTS.map((ach) => {
-                  const unlocked = ach.condition(profile.wins)
+                  const unlocked = ach.condition(displayWins)
                   return (
                     <div
                       key={ach.id}
