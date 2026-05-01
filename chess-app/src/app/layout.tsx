@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import SideNav from '@/components/layout/SideNav'
 import MobileNav from '@/components/layout/MobileNav'
+import { PlayerProfileProvider } from '@/hooks/usePlayerProfile'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,11 +32,13 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-background text-on-background antialiased flex h-screen overflow-hidden`}>
-        <SideNav />
-        <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0 pb-16 md:pb-0">
-          {children}
-        </div>
-        <MobileNav />
+        <PlayerProfileProvider>
+          <SideNav />
+          <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0 pb-16 md:pb-0">
+            {children}
+          </div>
+          <MobileNav />
+        </PlayerProfileProvider>
       </body>
     </html>
   )

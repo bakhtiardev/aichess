@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 
 export interface GameRecord {
   id: string
@@ -45,7 +45,19 @@ const DEFAULT_PROFILE: PlayerProfile = {
   },
 }
 
-export function usePlayerProfile() {
+interface PlayerProfileContextType {
+  profile: PlayerProfile
+  winRate: number
+  totalGames: number
+  saveProfile: (updated: PlayerProfile) => void
+  recordGame: (record: Omit<GameRecord, 'id' | 'date'>) => void
+  syncWithChessCom: (username: string) => Promise<{ success: boolean; error?: string }>
+  updateSettings: (newSettings: Partial<PlayerProfile['settings']>) => void
+}
+
+const PlayerProfileContext = createContext<PlayerProfileContextType | undefined>(undefined)
+
+export function PlayerProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<PlayerProfile>(DEFAULT_PROFILE)
 
   useEffect(() => {
@@ -60,7 +72,6 @@ export function usePlayerProfile() {
             ...DEFAULT_PROFILE.settings,
             ...parsed.settings,
           },
-          // Ensure ratingHistory exists and is an array
           ratingHistory: Array.isArray(parsed.ratingHistory) 
             ? parsed.ratingHistory 
             : DEFAULT_PROFILE.ratingHistory
@@ -106,9 +117,6 @@ export function usePlayerProfile() {
     [profile, saveProfile]
   )
 
-  const totalGames = profile.wins + profile.losses + profile.draws
-  const winRate = totalGames > 0 ? Math.round((profile.wins / totalGames) * 100) : 0
-
   const syncWithChessCom = useCallback(async (username: string) => {
     try {
       const [profileRes, statsRes] = await Promise.all([
@@ -149,7 +157,6 @@ export function usePlayerProfile() {
         chessComStats: { rapid, blitz }
       }
       
-      // Update local elo if rapid or blitz exists (prefer rapid)
       if (rapid) updated.elo = rapid.elo
       else if (blitz) updated.elo = blitz.elo
 
@@ -172,5 +179,28 @@ export function usePlayerProfile() {
     saveProfile(updated)
   }, [profile, saveProfile])
 
-  return { profile, recordGame, winRate, totalGames, saveProfile, syncWithChessCom, updateSettings }
+  const totalGames = profile.wins + profile.losses + profile.draws
+  const winRate = totalGames > 0 ? Math.round((profile.wins / totalGames) * 100) : 0
+
+  return (
+    <PlayerProfileContext.Provider value={{ 
+      profile, 
+      winRate, 
+      totalGames, 
+      saveProfile, 
+      recordGame, 
+      syncWithChessCom, 
+      updateSettings 
+    }}>
+      {children}
+    </PlayerProfileContext.Provider>
+  )
+}
+
+export function usePlayerProfile() {
+  const context = useContext(PlayerProfileContext)
+  if (context === undefined) {
+    throw new Error('usePlayerProfile must be used within a PlayerProfileProvider')
+  }
+  return context
 }
