@@ -52,6 +52,16 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
           )}
         </div>
         <div className="flex items-center gap-3">
+          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high">
+            <span className="material-symbols-outlined text-xl">settings</span>
+          </button>
+          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high relative">
+            <span className="material-symbols-outlined text-xl">notifications</span>
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full border border-surface-container"></span>
+          </button>
+
+          <div className="h-4 w-px bg-outline-variant mx-1"></div>
+
           {profile.chessComUsername ? (
             <div className="flex items-center gap-2 px-2 py-1 bg-surface-container-high rounded-full border border-outline-variant" title={`Linked as ${profile.chessComUsername}`}>
               {profile.avatarUrl ? (
@@ -72,16 +82,6 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
               <span className="hidden sm:inline">Connect Chess.com</span>
             </button>
           )}
-
-          <div className="h-4 w-px bg-outline-variant mx-1"></div>
-
-          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high">
-            <span className="material-symbols-outlined text-xl">settings</span>
-          </button>
-          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high relative">
-            <span className="material-symbols-outlined text-xl">notifications</span>
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full border border-surface-container"></span>
-          </button>
         </div>
       </header>
 
