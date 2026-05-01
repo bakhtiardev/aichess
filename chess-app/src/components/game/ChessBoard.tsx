@@ -13,6 +13,7 @@ interface ChessBoardProps {
   disabled?: boolean
   thinkingText?: string
   customArrows?: { from: string, to: string, color?: string }[]
+  failedSquare?: string | null
 }
 
 export default function ChessBoardComponent({
@@ -23,6 +24,7 @@ export default function ChessBoardComponent({
   disabled = false,
   thinkingText = 'AI is thinking...',
   customArrows = [],
+  failedSquare = null,
 }: ChessBoardProps) {
   const { state, getLegalMoves } = gameHook
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
@@ -51,6 +53,13 @@ export default function ChessBoardComponent({
   if (selectedSquare) {
     customSquareStyles[selectedSquare] = {
       backgroundColor: 'rgba(159, 214, 104, 0.5)',
+    }
+  }
+
+  // Failed square highlight
+  if (failedSquare) {
+    customSquareStyles[failedSquare] = {
+      backgroundColor: 'rgba(239, 68, 68, 0.4)',
     }
   }
 
@@ -137,6 +146,25 @@ export default function ChessBoardComponent({
             arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
             allowDrawingArrows: false,
             animationDurationInMs: 150,
+            customSquare: ({ children, square, style }) => (
+              <div 
+                style={{ ...style, position: 'relative' }}
+                className={failedSquare === square ? 'border-2 border-error z-10' : ''}
+              >
+                {children}
+                {failedSquare === square && (
+                  <div className="absolute top-0 right-0 z-[100] animate-in fade-in zoom-in slide-in-from-top-1 slide-in-from-right-1 duration-200">
+                    <div className="bg-[#f25e5e] rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center shadow-md border-[1.5px] border-white">
+                      <span 
+                        className="material-symbols-outlined text-white text-[14px] md:text-[16px] font-black"
+                      >
+                        close
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ),
           }}
         />
         {isAIThinking && (

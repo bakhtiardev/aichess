@@ -22,6 +22,8 @@ export default function PuzzleClient() {
   const [moveIndex, setMoveIndex] = useState(0)
   const [status, setStatus] = useState<'playing' | 'solved' | 'failed'>('playing')
   const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(null)
+  const [failedSquare, setFailedSquare] = useState<string | null>(null)
+  const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   
   const gameHook = useChessGame()
   const { game, state, loadFen, makeMove } = gameHook
@@ -32,6 +34,7 @@ export default function PuzzleClient() {
     setStatus('playing')
     setMoveIndex(0)
     setHintMove(null)
+    setFailedSquare(null)
     
     try {
       const res = await fetch('/api/daily-puzzle')
@@ -46,6 +49,10 @@ export default function PuzzleClient() {
       
       setPuzzle(data)
       loadFen(data.puzzle.fen)
+      
+      // Fix orientation to the starting side to move
+      const chess = new Chess(data.puzzle.fen)
+      setOrientation(chess.turn() === 'w' ? 'white' : 'black')
     } catch (err: any) {
       setError(err.message || 'Could not load daily puzzle. Please try again later.')
       console.error('Puzzle loading failed:', err)
@@ -87,7 +94,19 @@ export default function PuzzleClient() {
         return true
       }
     } else {
-      setStatus('failed')
+      // Wrong move but legal chess move
+      const success = makeMove(from, to, promotion)
+      if (success) {
+        setFailedSquare(to)
+        
+        setTimeout(() => {
+          game.undo()
+          loadFen(game.fen())
+          setFailedSquare(null)
+        }, 1000)
+        
+        return true
+      }
     }
     return false
   }
@@ -140,7 +159,7 @@ export default function PuzzleClient() {
     )
   }
 
-  const playerColor = state.turn === 'w' ? 'white' : 'black'
+
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -162,11 +181,12 @@ export default function PuzzleClient() {
           <div className="w-full max-w-[560px] md:max-w-[640px] xl:max-w-[720px] aspect-square flex-shrink-0 shadow-2xl relative">
             <ChessBoardComponent
               gameHook={gameHook}
-              playerColor={playerColor}
+              playerColor={orientation}
               onPlayerMove={handlePlayerMove}
-              isAIThinking={status === 'playing' && moveIndex % 2 === 1}
+               isAIThinking={status === 'playing' && moveIndex % 2 === 1}
               thinkingText="Opponent move..."
               customArrows={hintMove ? [{ from: hintMove.from, to: hintMove.to, color: 'rgba(255, 170, 0, 0.8)' }] : undefined}
+              failedSquare={failedSquare}
             />
             
             {status === 'solved' && (
@@ -187,28 +207,7 @@ export default function PuzzleClient() {
               </div>
             )}
 
-            {status === 'failed' && (
-              <div className="absolute inset-0 bg-error/10 backdrop-blur-[2px] flex items-center justify-center z-30 animate-in fade-in zoom-in duration-300">
-                <div className="bg-surface-container-high border-2 border-error/30 p-8 rounded-2xl shadow-2xl text-center max-w-xs mx-4">
-                  <div className="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-error/20">
-                    <span className="material-symbols-outlined text-error text-4xl">close</span>
-                  </div>
-                  <h2 className="text-headline-sm font-black text-on-surface mb-2">Wrong Move</h2>
-                  <p className="text-on-surface-variant text-sm mb-6">That wasn't the best move. Don't worry, try again!</p>
-                  <button 
-                    onClick={() => {
-                      loadFen(puzzle!.puzzle.fen)
-                      setMoveIndex(0)
-                      setStatus('playing')
-                      setHintMove(null)
-                    }}
-                    className="w-full bg-surface-variant text-on-surface py-3 rounded-lg font-bold hover:bg-surface-bright transition-all"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
 
@@ -244,7 +243,7 @@ export default function PuzzleClient() {
               Goal
             </h3>
             <p className="text-sm text-on-surface-variant leading-relaxed">
-              Find the best sequence of moves for {game.turn() === 'w' ? 'White' : 'Black'}. 
+              Find the best sequence of moves for {orientation === 'white' ? 'White' : 'Black'}. 
               Be careful, only the most precise moves will solve the puzzle!
             </p>
             
