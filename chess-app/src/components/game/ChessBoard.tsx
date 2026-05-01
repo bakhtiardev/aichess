@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { Chessboard } from 'react-chessboard'
 import type { Square } from 'chess.js'
 import type { UseChessGameReturn } from '@/hooks/useChessGame'
@@ -44,24 +44,28 @@ export default function ChessBoardComponent({
 
   const theme = THEMES[boardTheme] || THEMES.green
 
-  const getCustomPieces = (set: string) => {
-    const pieces = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK']
-    const customPieces: Record<string, any> = {}
-    
-    pieces.forEach(p => {
-      customPieces[p] = ({ squareWidth }: { squareWidth: number }) => (
-        <div 
+  const customPieces = useMemo(() => {
+    if (pieceSet === 'standard') return undefined
+
+    const pieceTypes = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK']
+    const result: Record<string, (props?: { fill?: string; square?: string; svgStyle?: React.CSSProperties }) => React.JSX.Element> = {}
+
+    pieceTypes.forEach(p => {
+      result[p] = ({ svgStyle } = {}) => (
+        <img
+          src={`https://lichess1.org/assets/piece/${pieceSet}/${p}.svg`}
+          alt={p}
           style={{
-            width: squareWidth,
-            height: squareWidth,
-            backgroundImage: `url(https://lichess1.org/assets/piece/${set}/${p}.svg)`,
-            backgroundSize: '100%',
+            ...svgStyle,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
           }}
         />
       )
     })
-    return customPieces
-  }
+    return result
+  }, [pieceSet])
 
   const isPlayerTurn =
     (playerColor === 'white' && state.turn === 'w') ||
@@ -168,6 +172,7 @@ export default function ChessBoardComponent({
           } shadow-2xl transition-all duration-300`}
       >
         <Chessboard
+          key={pieceSet}
           options={{
             position: state.fen,
             onPieceDrop,
@@ -175,12 +180,12 @@ export default function ChessBoardComponent({
             boardOrientation: playerColor,
             darkSquareStyle: { backgroundColor: theme.dark },
             lightSquareStyle: { backgroundColor: theme.light },
-            customPieces: pieceSet === 'standard' ? undefined : getCustomPieces(pieceSet),
+            pieces: customPieces,
             squareStyles: customSquareStyles,
             arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
             allowDrawingArrows: true,
             animationDurationInMs: 150,
-            customSquare: ({ children, square, style }) => (
+            squareRenderer: ({ children, square, style }) => (
               <div
                 style={{ ...style, position: 'relative' }}
                 className={failedSquare === square ? 'border-2 border-error z-10' : ''}
