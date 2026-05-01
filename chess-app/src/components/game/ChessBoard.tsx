@@ -144,7 +144,7 @@ export default function ChessBoardComponent({
             lightSquareStyle: { backgroundColor: '#ebecd0' },
             squareStyles: customSquareStyles,
             arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
-            allowDrawingArrows: false,
+            allowDrawingArrows: true,
             animationDurationInMs: 150,
             customSquare: ({ children, square, style }) => (
               <div
