@@ -5,6 +5,7 @@ import { Chess } from 'chess.js'
 import ChessBoardComponent from '@/components/game/ChessBoard'
 import { useChessGame } from '@/hooks/useChessGame'
 import Link from 'next/link'
+import TopBar from '@/components/layout/TopBar'
 
 interface LichessPuzzle {
   puzzle: {
@@ -184,16 +185,10 @@ export default function PuzzleClient() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Top Bar */}
-      <header className="flex justify-between items-center h-14 px-6 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="text-on-surface-variant hover:text-on-surface transition-colors">
-            <span className="material-symbols-outlined text-xl">arrow_back</span>
-          </Link>
-          <h1 className="text-sm font-bold text-primary">Random Puzzle</h1>
-          <span className="text-outline-variant">/</span>
-          <span className="text-on-surface-variant text-sm">Rating: {puzzle?.puzzle.rating}</span>
-        </div>
-      </header>
+      <TopBar 
+        title="Random Puzzle" 
+        subtitle={puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'} 
+      />
 
       <main className="flex-1 flex flex-col lg:flex-row gap-6 p-6 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
         {/* Left: Board */}

@@ -12,6 +12,7 @@ interface TopBarProps {
 export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps) {
   const { profile, syncWithChessCom } = usePlayerProfile()
   const [showSyncModal, setShowSyncModal] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
   const [chessComInput, setChessComInput] = useState('')
   const [isSyncing, setIsSyncing] = useState(false)
   const [syncError, setSyncError] = useState<string | null>(null)
@@ -52,9 +53,6 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
           )}
         </div>
         <div className="flex items-center gap-3">
-          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high">
-            <span className="material-symbols-outlined text-xl">settings</span>
-          </button>
           <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high relative">
             <span className="material-symbols-outlined text-xl">notifications</span>
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full border border-surface-container"></span>
@@ -63,15 +61,66 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
           <div className="h-4 w-px bg-outline-variant mx-1"></div>
 
           {profile.chessComUsername ? (
-            <div className="flex items-center gap-2 px-2 py-1 bg-surface-container-high rounded-full border border-outline-variant" title={`Linked as ${profile.chessComUsername}`}>
-              {profile.avatarUrl ? (
-                <img src={profile.avatarUrl} alt="Avatar" className="w-6 h-6 rounded-full object-cover border border-primary/30" />
-              ) : (
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[14px] text-on-primary">person</span>
-                </div>
+            <div className="relative">
+              <button 
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center gap-2 px-2 py-1 bg-surface-container-high hover:bg-surface-container-highest transition-colors rounded-full border border-outline-variant" 
+                title={`Linked as ${profile.chessComUsername}`}
+              >
+                {profile.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt="Avatar" className="w-6 h-6 rounded-full object-cover border border-primary/30" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[14px] text-on-primary">person</span>
+                  </div>
+                )}
+                <span className="text-xs font-bold text-on-surface hidden sm:inline-block pr-1">{profile.chessComUsername}</span>
+                <span className="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showDropdown && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)}></div>
+                  <div className="absolute right-0 top-full mt-2 w-60 bg-surface-container-low border border-outline-variant rounded-xl shadow-lg z-50 overflow-hidden flex flex-col">
+                    {/* Header: User Details */}
+                    <div className="p-4 border-b border-outline-variant bg-surface-container-high/50 flex items-center gap-3">
+                      {profile.avatarUrl ? (
+                        <img src={profile.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover border-2 border-primary/50" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                          <span className="material-symbols-outlined text-[20px] text-on-primary">person</span>
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="font-bold text-on-surface text-sm leading-tight">{profile.chessComUsername}</span>
+                        <span className="text-xs text-primary font-bold flex items-center gap-1 mt-0.5">
+                          <span className="material-symbols-outlined text-[12px]">monitoring</span>
+                          ELO {profile.elo}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <div className="p-2 flex flex-col gap-1">
+                      <button className="flex items-center gap-3 px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-colors text-left w-full">
+                        <span className="material-symbols-outlined text-[18px]">settings</span>
+                        Settings
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setShowDropdown(false)
+                          setShowSyncModal(true)
+                        }}
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-colors text-left w-full"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">sync_alt</span>
+                        Sync another account
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
-              <span className="text-xs font-bold text-on-surface hidden sm:inline-block pr-2">{profile.chessComUsername}</span>
             </div>
           ) : (
             <button 
