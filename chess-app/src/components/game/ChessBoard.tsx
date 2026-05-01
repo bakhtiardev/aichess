@@ -130,8 +130,8 @@ export default function ChessBoardComponent({
       <div
         style={{ maxHeight: '720px', maxWidth: '720px' }}
         className={`aspect-square h-full max-h-full max-w-full relative rounded-lg overflow-hidden border-4 ${state.isCheck && !state.isGameOver
-            ? 'border-error shadow-[0_0_30px_rgba(255,180,171,0.3)]'
-            : 'border-surface-container-highest'
+          ? 'border-error shadow-[0_0_30px_rgba(255,180,171,0.3)]'
+          : 'border-surface-container-highest'
           } shadow-2xl transition-all duration-300`}
       >
         <Chessboard
@@ -147,18 +147,19 @@ export default function ChessBoardComponent({
             allowDrawingArrows: false,
             animationDurationInMs: 150,
             customSquare: ({ children, square, style }) => (
-              <div 
+              <div
                 style={{ ...style, position: 'relative' }}
                 className={failedSquare === square ? 'border-2 border-error z-10' : ''}
               >
                 {children}
                 {failedSquare === square && (
-                  <div className="absolute top-0 right-0 z-[100] animate-in fade-in zoom-in slide-in-from-top-1 slide-in-from-right-1 duration-200">
-                    <div className="bg-[#f25e5e] rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center shadow-md border-[1.5px] border-white">
-                      <span 
-                        className="material-symbols-outlined text-white text-[14px] md:text-[16px] font-black"
+                  <div className="absolute top-0 right-0 z-[100] translate-x-1/4 -translate-y-1/4 animate-in fade-in zoom-in duration-200">
+                    <div className="bg-white rounded-full flex items-center justify-center shadow-lg">
+                      <span
+                        className="material-symbols-outlined text-[#f25e5e] text-[22px] md:text-[28px] lg:text-[32px]"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
                       >
-                        close
+                        cancel
                       </span>
                     </div>
                   </div>
