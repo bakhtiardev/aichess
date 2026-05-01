@@ -220,9 +220,8 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
                     <button
                       key={t.id}
                       onClick={() => updateSettings({ boardTheme: t.id })}
-                      className={`group relative flex flex-col items-center gap-2 p-1 rounded-lg border-2 transition-all ${
-                        profile.settings.boardTheme === t.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
-                      }`}
+                      className={`group relative flex flex-col items-center gap-2 p-1 rounded-lg border-2 transition-all ${profile.settings.boardTheme === t.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
+                        }`}
                     >
                       <div className="w-full aspect-square rounded-md overflow-hidden grid grid-cols-2 grid-rows-2">
                         <div style={{ backgroundColor: t.light }} />
@@ -250,9 +249,8 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
                     <button
                       key={p.id}
                       onClick={() => updateSettings({ pieceSet: p.id })}
-                      className={`group flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${
-                        profile.settings.pieceSet === p.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
-                      }`}
+                      className={`group flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${profile.settings.pieceSet === p.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
+                        }`}
                     >
                       <div className="w-10 h-10 flex items-center justify-center">
                         <img
@@ -274,7 +272,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
               onClick={() => setShowSettingsModal(false)}
               className="w-full bg-primary/10 text-primary py-3 rounded-lg font-bold hover:bg-primary/20 transition-all mt-8"
             >
-              Save changes
+              Save Changes
             </button>
           </div>
         </div>
