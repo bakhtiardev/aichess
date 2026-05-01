@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - AlexeyV</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#e1e4d7",
+                    "surface-container": "#1d2119",
+                    "primary-fixed-dim": "#9fd668",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed": "#0f2000",
+                    "tertiary": "#ffade6",
+                    "primary": "#9fd668",
+                    "tertiary-container": "#ea84cf",
+                    "surface-container-highest": "#33362d",
+                    "on-secondary-container": "#9fbf7c",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#9fd668",
+                    "secondary-fixed": "#cceda5",
+                    "secondary-fixed-dim": "#b0d18b",
+                    "surface-container-low": "#191d15",
+                    "on-primary-fixed": "#0e2000",
+                    "tertiary-fixed-dim": "#ffade6",
+                    "on-tertiary-fixed-variant": "#792268",
+                    "on-primary-container": "#244400",
+                    "on-tertiary-fixed": "#3a0031",
+                    "inverse-on-surface": "#2e3229",
+                    "primary-fixed": "#baf381",
+                    "on-primary": "#1c3700",
+                    "surface-dim": "#11140d",
+                    "primary-container": "#81b64c",
+                    "on-tertiary": "#5d0450",
+                    "outline-variant": "#42493a",
+                    "on-primary-fixed-variant": "#2b5000",
+                    "on-secondary": "#1e3702",
+                    "tertiary-fixed": "#ffd7ef",
+                    "on-error-container": "#ffdad6",
+                    "inverse-surface": "#e1e4d7",
+                    "background": "#11140d",
+                    "inverse-primary": "#3b6a00",
+                    "surface-container-high": "#282b23",
+                    "on-background": "#e1e4d7",
+                    "on-surface-variant": "#c2c9b6",
+                    "secondary-container": "#344e17",
+                    "surface-container-lowest": "#0c0f08",
+                    "surface": "#11140d",
+                    "surface-bright": "#373a32",
+                    "on-error": "#690005",
+                    "secondary": "#b0d18b",
+                    "on-tertiary-container": "#6c165d",
+                    "surface-variant": "#33362d",
+                    "on-secondary-fixed-variant": "#344e17",
+                    "outline": "#8c9381"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-max": "1200px",
+                    "margin": "24px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "label-bold": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "headline-xl": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "label-bold": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-xl": [
+                            "40px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen w-screen overflow-hidden flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (from JSON) -->
+<nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface-container-low h-screen w-64 border-r border-outline-variant">
+<div class="mb-10 flex justify-center px-2">
+<img alt="AI Chess Logo" class="w-48 h-auto object-contain drop-shadow-xl" src="https://lh3.googleusercontent.com/aida/ADBb0uhSjKoj5KpmifDHHbtNHOuD6MTVU7bSzPRPjEpdcaSkhauK4Zkadj1V9CKegSNnhge9E3TPMOPBwvRWzH2i5sm5Pb2D05CA2ko0pa9qacc_gsVotjHrwoycl0m3m8YjL48M96IzzbhvXv3IWGV4jme7uvhOzday_rQSbXw2L3R8aD_mHpX8UwlWdnn2HvCHN80OVrSguwIMOj9aG8a_fNEbmOAzhwCLpDcL7SCFSj9_hMyNLkGf9iOnVyx_q-JxHVdjS0eclha0rg"/>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">play_circle</span>
+                    Play
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">extension</span>
+                    Puzzles
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">smart_toy</span>
+                    AI Arena
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg bg-surface-container-high text-primary border-l-4 border-primary font-body-md font-semibold tracking-tight transition-all" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 1;">person</span>
+                    Profile
+                </a>
+</li>
+</ul>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary hover:brightness-110 transition-colors duration-200 py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center">
+<span class="material-symbols-outlined mr-2">add</span>
+                New Game
+            </button>
+</div>
+</nav>
+<!-- TopAppBar (from JSON) -->
+<div class="flex-1 flex flex-col h-screen relative">
+<header class="flex justify-between items-center h-14 px-6 w-full bg-surface-container-low border-b border-outline-variant z-10 hidden md:flex">
+<div class="text-neutral-400 font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span>Profile / AlexeyV</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-[#81b64c] text-[18px]">search</span>
+<input class="bg-surface-container-low border border-outline-variant rounded-DEFAULT h-9 pl-9 pr-4 text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-[#81b64c] focus:ring-1 focus:ring-[#81b64c] w-64 transition-all" placeholder="Search players, games..." type="text"/>
+</div>
+<div class="flex items-center gap-4 text-[#81b64c]">
+<button class="hover:text-white transition-colors cursor-pointer active:opacity-80 p-1 rounded-full hover:bg-surface-variant relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="hover:text-white transition-colors cursor-pointer active:opacity-80 p-1 rounded-full hover:bg-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 h-[calc(100vh-56px)] overflow-y-auto bg-surface p-margin">
+<div class="max-w-container-max mx-auto space-y-gutter">
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- 1. User Header Area (Spans full width top) -->
+<div class="lg:col-span-12 bg-surface-container-low rounded-lg p-6 border border-outline-variant flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+<!-- Ambient Glow -->
+<div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center gap-6 z-10">
+<div class="relative">
+<img alt="AlexeyV Profile" class="w-24 h-24 rounded-full object-cover border-2 border-primary" data-alt="A striking portrait of a male chess grandmaster in a dark, atmospheric setting. He is looking intensely forward. The lighting is cinematic with a strong, saturated green rim light (#81b64c) illuminating one side of his face against a deep charcoal background, emphasizing deep focus and intellect." src="https://lh3.googleusercontent.com/aida/ADBb0uiLHN_ZU3_oOFYr-ZxC0evZMITda3ds5aA_0Xagj_eDPS4eGkykg37BnASQgyutWNu5GlXbs4qt_YMRbEMDoFVhwOiGupUjVJKRbClM0zFUR-79oYhwGnpFq0qyumvl-6IqjbX9GHFvDTLGnN6HWBOguPBoU0VVBVF3sHQI8rkzGB2uLsLhyq2FuhyPeAPzL5RLZ0GCAaLDyRnpM61JSLVFZ2UEH1A8D-J_6fkf-3ajqkW1wFJ8ZLVdA6Y"/>
+<div class="absolute -bottom-2 -right-2 bg-error-container text-on-error-container text-[10px] font-label-bold px-2 py-1 rounded-full border-2 border-surface-container-low shadow-sm">
+                                GM
+                            </div>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-3">
+                                AlexeyV
+                                <span class="material-symbols-outlined text-primary text-[24px]" title="Verified Grandmaster">verified</span>
+</h1>
+<div class="flex flex-wrap items-center gap-4 mt-2 font-body-sm text-body-sm text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">monitoring</span>
+<span class="font-semibold text-primary">Elo: 2450</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Moscow, Russia</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span>Joined 2018</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 z-10 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-6 py-2 bg-surface-container-high border border-outline text-on-surface rounded-DEFAULT font-label-bold text-label-bold hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                            Follow
+                        </button>
+<button class="flex-1 md:flex-none px-6 py-2 bg-primary-container text-on-primary-container rounded-DEFAULT font-label-bold text-label-bold hover:brightness-110 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">swords</span>
+                            Challenge
+                        </button>
+</div>
+</div>
+<!-- 2. Performance Stats Card (Left Col) -->
+<div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Win Rate Gauge & Record -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col gap-6 col-span-1 md:col-span-2">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                            Performance
+                        </h2>
+<div class="flex flex-col md:flex-row items-center gap-8 justify-around">
+<!-- Circular Gauge (CSS Representation) -->
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="113.04" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-lg text-headline-lg text-on-surface">55%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Win Rate</span>
+</div>
+</div>
+<!-- Horizontal Record Bar -->
+<div class="flex-1 w-full max-w-sm flex flex-col gap-3">
+<div class="flex justify-between font-label-bold text-label-bold text-on-surface">
+<span>Record (All Time)</span>
+<span>2,010 Games</span>
+</div>
+<div class="h-3 w-full flex rounded-full overflow-hidden border border-outline-variant bg-surface">
+<div class="h-full bg-primary" style="width: 61.6%;" title="Wins: 1240"></div>
+<div class="h-full bg-surface-variant border-x border-background" style="width: 15.9%;" title="Draws: 320"></div>
+<div class="h-full bg-error" style="width: 22.3%;" title="Losses: 450"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-primary"></div> <span class="text-on-surface">1,240 W</span></div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-surface-variant"></div> <span class="text-on-surface">320 D</span></div>
+<div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-error"></div> <span class="text-on-surface">450 L</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Rating Fluctuation Chart (Placeholder representation) -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-6 col-span-1 md:col-span-2 min-h-[240px] flex flex-col">
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider">Rating Fluctuation (7 Days)</h3>
+<span class="font-headline-md text-headline-md text-primary">+12</span>
+</div>
+<div class="flex-1 w-full bg-surface-variant/20 rounded-DEFAULT border border-outline-variant/50 relative overflow-hidden flex items-end px-2 pt-8 gap-2">
+<!-- Faux Bar Chart -->
+<div class="flex-1 bg-surface-variant hover:bg-primary/50 transition-colors rounded-t-sm h-[40%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2438</div>
+</div>
+<div class="flex-1 bg-surface-variant hover:bg-primary/50 transition-colors rounded-t-sm h-[35%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2435</div>
+</div>
+<div class="flex-1 bg-surface-variant hover:bg-primary/50 transition-colors rounded-t-sm h-[50%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2442</div>
+</div>
+<div class="flex-1 bg-surface-variant hover:bg-primary/50 transition-colors rounded-t-sm h-[45%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2440</div>
+</div>
+<div class="flex-1 bg-primary/80 hover:bg-primary transition-colors rounded-t-sm h-[70%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2452</div>
+</div>
+<div class="flex-1 bg-surface-variant hover:bg-primary/50 transition-colors rounded-t-sm h-[60%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2448</div>
+</div>
+<div class="flex-1 bg-primary hover:bg-primary-fixed transition-colors rounded-t-sm h-[65%] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-container-highest text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-sm border border-outline-variant">2450</div>
+</div>
+<!-- Graph Grid Line -->
+<div class="absolute w-full h-[1px] bg-outline-variant/30 top-1/2 left-0 pointer-events-none"></div>
+</div>
+</div>
+</div>
+<!-- 3. Achievements Sidebar (Right Col) -->
+<div class="lg:col-span-4 bg-surface-container-low border border-outline-variant rounded-lg p-6 flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container">military_tech</span>
+                        Achievements
+                    </h2>
+<div class="flex flex-col gap-4 overflow-y-auto pr-2">
+<!-- Badge 1 -->
+<div class="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/50 hover:border-outline transition-colors">
+<div class="w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center border border-primary-container/20 shrink-0">
+<img alt="Tactical Master Badge" class="w-8 h-8 object-contain" data-alt="A stylized digital icon of a chess knight striking downward like lightning, rendered in bright green (#81b64c) and deep blacks. The aesthetic is clean, modern, and flat, suitable for a UI badge. No complex backgrounds." src="https://lh3.googleusercontent.com/aida/ADBb0uiK2cL8y0AFFD3Hod-1hpG31taWCahAnwag5k3HvLuTM_rZwWdNHt566M5fwXNY0bsWuVq70UGXQcEskdKX1y49tejNm9wKYy72GWwT1h29Gb-qMjpPRCcUwwD7VwRuikL-146miYnQtNgqTTFl7ruYzIDSr1Gto5DBE2RvvF7xKE3XzsArsLto1Ph-jHUKlWAM-I8O5IhI-SFuwGf0iInTxgSr-H_IZW5v9M77jyOGwhUaV8ZW2D31g68"/>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold text-on-surface">Tactical Master</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Executed 50+ complex tactical combinations.</p>
+</div>
+</div>
+<!-- Badge 2 -->
+<div class="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/50 hover:border-outline transition-colors">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center border border-tertiary-container/20 shrink-0">
+<img alt="Endgame Specialist Badge" class="w-8 h-8 object-contain" data-alt="A stylized digital icon of a lone chess king standing triumphant on an empty board, rendered in subtle pinks and charcoal gray. The style is minimalist, clean vector art suitable for a software achievement badge. Solid dark background." src="https://lh3.googleusercontent.com/aida/ADBb0ug1-ReThgQGHOINmr7Fdc-h0wXdLg1cTCucmUu-SGwsVefC5Givp47NDi2ZLOr-YCP7JvxhotI-lcod99CLqdFsPQaFN0MZ48njVtCoM5PbOV2Q4R00F1kCW8dW1RViDXea2nlnXw8BivVpJ42OWQveZVJxLAgo3Bur1ngR4cZWuV1BQk_-1dYR8C-3QzIaOcsG0nx_tVwUGvUKQb-B-q3_xSTMua0brjUiYhXPxXUw3bK_xsDGY-5Vxlw"/>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold text-on-surface">Endgame Specialist</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Won 100 games in the endgame phase.</p>
+</div>
+</div>
+<!-- Badge 3 -->
+<div class="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/50 hover:border-outline transition-colors">
+<div class="w-12 h-12 rounded-full bg-secondary-container/20 flex items-center justify-center border border-secondary-container/40 shrink-0">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px]">shield</span>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold text-on-surface">Impenetrable</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Zero blunders in 10 consecutive games.</p>
+</div>
+</div>
+<!-- Badge 4 -->
+<div class="flex items-center gap-4 bg-surface p-3 rounded-lg border border-outline-variant/50 hover:border-outline transition-colors opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-not-allowed">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center border border-outline-variant shrink-0">
+<span class="material-symbols-outlined text-outline text-[24px]">lock</span>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold text-on-surface">AI Conqueror</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-1">Defeat Stockfish 16.1</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Recent AI Matches Table (Spans full width bottom) -->
+<div class="lg:col-span-12 bg-surface-container-low border border-outline-variant rounded-lg p-6 overflow-hidden flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">memory</span>
+                            Recent AI Matches
+                        </h2>
+<button class="font-label-bold text-label-bold text-primary hover:text-primary-fixed transition-colors flex items-center gap-1">
+                            View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/50">
+<th class="py-3 px-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Opponent</th>
+<th class="py-3 px-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Result</th>
+<th class="py-3 px-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Accuracy</th>
+<th class="py-3 px-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold">Opening</th>
+<th class="py-3 px-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider font-semibold text-right">Date</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-3 px-4 text-on-surface font-medium flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-variant flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
+</div>
+                                        Gemini 1.5 Pro
+                                    </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container border border-primary-container/30 font-label-bold text-[10px]">
+                                            Win
+                                        </span>
+</td>
+<td class="py-3 px-4 text-on-surface">94.2%</td>
+<td class="py-3 px-4 text-on-surface-variant">Sicilian Defense</td>
+<td class="py-3 px-4 text-on-surface-variant text-right group-hover:text-primary transition-colors">Today</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-3 px-4 text-on-surface font-medium flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-variant flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-error">precision_manufacturing</span>
+</div>
+                                        Stockfish 16.1
+                                    </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container/20 text-error border border-error-container/30 font-label-bold text-[10px]">
+                                            Loss
+                                        </span>
+</td>
+<td class="py-3 px-4 text-on-surface">88.5%</td>
+<td class="py-3 px-4 text-on-surface-variant">Ruy Lopez</td>
+<td class="py-3 px-4 text-on-surface-variant text-right group-hover:text-primary transition-colors">Yesterday</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-3 px-4 text-on-surface font-medium flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-variant flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-secondary">memory</span>
+</div>
+                                        AlphaZero
+                                    </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant border border-outline-variant font-label-bold text-[10px]">
+                                            Draw
+                                        </span>
+</td>
+<td class="py-3 px-4 text-on-surface">96.1%</td>
+<td class="py-3 px-4 text-on-surface-variant">Queen's Gambit Declined</td>
+<td class="py-3 px-4 text-on-surface-variant text-right group-hover:text-primary transition-colors">Oct 24</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-variant/30 transition-colors group">
+<td class="py-3 px-4 text-on-surface font-medium flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-surface-variant flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] text-primary">smart_toy</span>
+</div>
+                                        Gemini 1.5 Pro
+                                    </td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container border border-primary-container/30 font-label-bold text-[10px]">
+                                            Win
+                                        </span>
+</td>
+<td class="py-3 px-4 text-on-surface">91.8%</td>
+<td class="py-3 px-4 text-on-surface-variant">Caro-Kann Defense</td>
+<td class="py-3 px-4 text-on-surface-variant text-right group-hover:text-primary transition-colors">Oct 22</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div> <!-- End Bento Grid -->
+</div>
+</main>
+</div>
+<!-- Main Content Canvas -->
+</body></html>

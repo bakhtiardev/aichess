@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chess AI Hub - The Lobby</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "background": "#11140d",
+                "surface-container-low": "#191d15",
+                "surface": "#11140d",
+                "on-surface-variant": "#c2c9b6",
+                "on-error-container": "#ffdad6",
+                "tertiary-container": "#ea84cf",
+                "surface-tint": "#9fd668",
+                "primary": "#9fd668",
+                "outline-variant": "#42493a",
+                "secondary": "#b0d18b",
+                "on-tertiary": "#5d0450",
+                "primary-container": "#81b64c",
+                "outline": "#8c9381",
+                "inverse-on-surface": "#2e3229",
+                "on-primary-fixed-variant": "#2b5000",
+                "on-tertiary-container": "#6c165d",
+                "on-secondary-fixed": "#0f2000",
+                "on-secondary-fixed-variant": "#344e17",
+                "surface-container-high": "#282b23",
+                "on-primary-container": "#244400",
+                "surface-container-highest": "#33362d",
+                "inverse-surface": "#e1e4d7",
+                "surface-container-lowest": "#0c0f08",
+                "on-secondary-container": "#9fbf7c",
+                "on-primary-fixed": "#0e2000",
+                "error-container": "#93000a",
+                "tertiary-fixed-dim": "#ffade6",
+                "surface-dim": "#11140d",
+                "error": "#ffb4ab",
+                "tertiary-fixed": "#ffd7ef",
+                "on-background": "#e1e4d7",
+                "on-primary": "#1c3700",
+                "tertiary": "#ffade6",
+                "on-surface": "#e1e4d7",
+                "on-tertiary-fixed": "#3a0031",
+                "on-secondary": "#1e3702",
+                "surface-variant": "#33362d",
+                "surface-container": "#1d2119",
+                "inverse-primary": "#3b6a00",
+                "secondary-fixed": "#cceda5",
+                "primary-fixed": "#baf381",
+                "on-tertiary-fixed-variant": "#792268",
+                "primary-fixed-dim": "#9fd668",
+                "surface-bright": "#373a32",
+                "secondary-container": "#344e17",
+                "secondary-fixed-dim": "#b0d18b",
+                "on-error": "#690005"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "unit": "4px",
+                "margin": "24px",
+                "container-max": "1200px"
+        },
+        "fontFamily": {
+                "headline-xl": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-bold": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "headline-xl": [
+                        "40px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface-container-low h-screen w-64 border-r border-outline-variant">
+<div class="mb-10 flex justify-center px-2">
+<img alt="AI Chess Logo" class="w-48 h-auto object-contain drop-shadow-xl" src="https://lh3.googleusercontent.com/aida/ADBb0uhSjKoj5KpmifDHHbtNHOuD6MTVU7bSzPRPjEpdcaSkhauK4Zkadj1V9CKegSNnhge9E3TPMOPBwvRWzH2i5sm5Pb2D05CA2ko0pa9qacc_gsVotjHrwoycl0m3m8YjL48M96IzzbhvXv3IWGV4jme7uvhOzday_rQSbXw2L3R8aD_mHpX8UwlWdnn2HvCHN80OVrSguwIMOj9aG8a_fNEbmOAzhwCLpDcL7SCFSj9_hMyNLkGf9iOnVyx_q-JxHVdjS0eclha0rg"/>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg bg-surface-container-high text-primary border-l-4 border-primary font-body-md font-semibold tracking-tight transition-all" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">play_circle</span>
+                    Play
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">extension</span>
+                    Puzzles
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">smart_toy</span>
+                    AI Arena
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">person</span>
+                    Profile
+                </a>
+</li>
+</ul>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary hover:brightness-110 transition-colors duration-200 py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center">
+<span class="material-symbols-outlined mr-2">add</span>
+                New Game
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-14 px-6 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10">
+<div class="flex items-center">
+<h1 class="text-lg font-bold text-primary font-['Inter']">Chess AI Hub</h1>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 h-2 w-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto p-margin bg-background">
+<div class="max-w-[container-max] mx-auto">
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">AI Opponents</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Challenge state-of-the-art language models in the AI Arena.</p>
+</div>
+<!-- Bento Grid for Opponents -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Gemini Card -->
+<div class="bg-surface-container-high rounded-lg border border-outline-variant p-6 flex flex-col hover:border-outline transition-colors relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-purple-500 opacity-80"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px] text-primary">psychology</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[20px]">Gemini 1.5 Pro</h3>
+<div class="inline-block px-2 py-1 bg-surface-container-highest rounded-sm font-label-bold text-label-bold text-on-surface-variant mt-1">ELO 3200</div>
+</div>
+</div>
+</div>
+<div class="space-y-3 mb-6 flex-1">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Playstyle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Positional / Sharp</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Compute</span>
+<span class="font-body-sm text-body-sm text-on-surface">Google Cloud TPU v5e</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Win Rate</span>
+<span class="font-body-sm text-body-sm text-on-surface">68%</span>
+</div>
+</div>
+<button class="w-full bg-surface-variant text-on-surface hover:bg-surface-bright hover:text-on-surface font-label-bold text-label-bold py-3 px-4 rounded-DEFAULT border border-outline-variant transition-all mt-auto flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">sports_esports</span>
+<span class="">Challenge</span>
+</button>
+</div>
+<!-- GPT-4o Card -->
+<div class="bg-surface-container-high rounded-lg border border-outline-variant p-6 flex flex-col hover:border-outline transition-colors relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-600 opacity-80"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px] text-primary">memory</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[20px]">GPT-4o</h3>
+<div class="inline-block px-2 py-1 bg-surface-container-highest rounded-sm font-label-bold text-label-bold text-on-surface-variant mt-1">ELO 3150</div>
+</div>
+</div>
+</div>
+<div class="space-y-3 mb-6 flex-1">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Playstyle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Tactical / Aggressive</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Compute</span>
+<span class="font-body-sm text-body-sm text-on-surface">Azure AI</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Win Rate</span>
+<span class="font-body-sm text-body-sm text-on-surface">65%</span>
+</div>
+</div>
+<button class="w-full bg-surface-variant text-on-surface hover:bg-surface-bright hover:text-on-surface font-label-bold text-label-bold py-3 px-4 rounded-DEFAULT border border-outline-variant transition-all mt-auto flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">sports_esports</span>
+<span class="">Challenge</span>
+</button>
+</div>
+<!-- Llama 3 Card -->
+<div class="bg-surface-container-high rounded-lg border border-outline-variant p-6 flex flex-col hover:border-outline transition-colors relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-indigo-800 opacity-80"></div>
+<div class="flex justify-between items-start mb-6">
+<div class="flex items-center space-x-3">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px] text-primary">smart_toy</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[20px]">Llama 3</h3>
+<div class="inline-block px-2 py-1 bg-surface-container-highest rounded-sm font-label-bold text-label-bold text-on-surface-variant mt-1">ELO 3100</div>
+</div>
+</div>
+</div>
+<div class="space-y-3 mb-6 flex-1">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Playstyle</span>
+<span class="font-body-sm text-body-sm text-on-surface">Solid / Defensive</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Compute</span>
+<span class="font-body-sm text-body-sm text-on-surface">Meta Custom Cluster</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Win Rate</span>
+<span class="font-body-sm text-body-sm text-on-surface">62%</span>
+</div>
+</div>
+<button class="w-full bg-surface-variant text-on-surface hover:bg-surface-bright hover:text-on-surface font-label-bold text-label-bold py-3 px-4 rounded-DEFAULT border border-outline-variant transition-all mt-auto flex items-center justify-center space-x-2">
+<span class="material-symbols-outlined text-[18px]">sports_esports</span>
+<span class="">Challenge</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

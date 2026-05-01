@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chess AI Hub - Play</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "background": "#11140d",
+                "surface-container-low": "#191d15",
+                "surface": "#11140d",
+                "on-surface-variant": "#c2c9b6",
+                "on-error-container": "#ffdad6",
+                "tertiary-container": "#ea84cf",
+                "surface-tint": "#9fd668",
+                "primary": "#9fd668",
+                "outline-variant": "#42493a",
+                "secondary": "#b0d18b",
+                "on-tertiary": "#5d0450",
+                "primary-container": "#81b64c",
+                "outline": "#8c9381",
+                "inverse-on-surface": "#2e3229",
+                "on-primary-fixed-variant": "#2b5000",
+                "on-tertiary-container": "#6c165d",
+                "on-secondary-fixed": "#0f2000",
+                "on-secondary-fixed-variant": "#344e17",
+                "surface-container-high": "#282b23",
+                "on-primary-container": "#244400",
+                "surface-container-highest": "#33362d",
+                "inverse-surface": "#e1e4d7",
+                "surface-container-lowest": "#0c0f08",
+                "on-secondary-container": "#9fbf7c",
+                "on-primary-fixed": "#0e2000",
+                "error-container": "#93000a",
+                "tertiary-fixed-dim": "#ffade6",
+                "surface-dim": "#11140d",
+                "error": "#ffb4ab",
+                "tertiary-fixed": "#ffd7ef",
+                "on-background": "#e1e4d7",
+                "on-primary": "#1c3700",
+                "tertiary": "#ffade6",
+                "on-surface": "#e1e4d7",
+                "on-tertiary-fixed": "#3a0031",
+                "on-secondary": "#1e3702",
+                "surface-variant": "#33362d",
+                "surface-container": "#1d2119",
+                "inverse-primary": "#3b6a00",
+                "secondary-fixed": "#cceda5",
+                "primary-fixed": "#baf381",
+                "on-tertiary-fixed-variant": "#792268",
+                "primary-fixed-dim": "#9fd668",
+                "surface-bright": "#373a32",
+                "secondary-container": "#344e17",
+                "secondary-fixed-dim": "#b0d18b",
+                "on-error": "#690005",
+                "surface-board-dark": "#779556",
+                "surface-board-light": "#ebecd0"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "16px",
+                "unit": "4px",
+                "margin": "24px",
+                "container-max": "1200px"
+        },
+        "fontFamily": {
+                "headline-xl": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "label-bold": [
+                        "Inter"
+                ],
+                "body-sm": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "headline-xl": [
+                        "40px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface-container-low h-screen w-64 border-r border-outline-variant">
+<div class="mb-10 flex justify-center px-2">
+<img alt="AI Chess Logo" class="w-48 h-auto object-contain drop-shadow-xl" src="https://lh3.googleusercontent.com/aida/ADBb0uhSjKoj5KpmifDHHbtNHOuD6MTVU7bSzPRPjEpdcaSkhauK4Zkadj1V9CKegSNnhge9E3TPMOPBwvRWzH2i5sm5Pb2D05CA2ko0pa9qacc_gsVotjHrwoycl0m3m8YjL48M96IzzbhvXv3IWGV4jme7uvhOzday_rQSbXw2L3R8aD_mHpX8UwlWdnn2HvCHN80OVrSguwIMOj9aG8a_fNEbmOAzhwCLpDcL7SCFSj9_hMyNLkGf9iOnVyx_q-JxHVdjS0eclha0rg"/>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg bg-surface-container-high text-primary border-l-4 border-primary font-body-md font-semibold tracking-tight transition-all" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">play_circle</span>
+                    Play
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">extension</span>
+                    Puzzles
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">smart_toy</span>
+                    AI Arena
+                </a>
+</li>
+<li>
+<a class="flex items-center px-4 py-3 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined mr-4" style="font-variation-settings: 'FILL' 0;">person</span>
+                    Profile
+                </a>
+</li>
+</ul>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary hover:brightness-110 transition-colors duration-200 py-3 rounded-lg font-label-bold text-label-bold flex items-center justify-center">
+<span class="material-symbols-outlined mr-2">add</span>
+                New Game
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-screen relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-14 px-6 w-full ml-64 bg-surface-container-low docked full-width top-0 absolute border-b border-outline-variant z-10 hidden md:flex" style="margin-left:0; width:100%;">
+<div class="font-headline-md text-sm text-lg font-bold text-primary tracking-tight">
+                Chess AI Hub
+            </div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Game Canvas -->
+<main class="flex-1 flex pt-14 p-gutter gap-gutter bg-background">
+<!-- Left Area: Board & Player Info -->
+<div class="flex-1 flex flex-col items-center justify-center relative">
+<!-- Opponent Info (Top of Board) -->
+<div class="w-full max-w-[600px] flex items-center justify-between mb-4 bg-surface-container-low p-3 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-DEFAULT bg-surface-bright flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">robot</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-label-bold text-label-bold text-on-surface uppercase">Gemini 1.5 Pro</h2>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-DEFAULT font-label-sm text-label-sm">GM</span>
+</div>
+<div class="flex items-center gap-1 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Thinking...</p>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-DEFAULT font-label-bold text-label-bold">04:12</div>
+</div>
+</div>
+<!-- Chess Board Container -->
+<div class="w-full max-w-[600px] aspect-square rounded-DEFAULT border-4 border-surface-container-highest overflow-hidden relative shadow-lg">
+<!-- Board Grid (8x8) -->
+<div class="grid grid-cols-8 grid-rows-8 w-full h-full">
+<!-- Generating a sample board state -->
+<!-- Row 8 -->
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">8</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<!-- Row 7 -->
+<div class="bg-surface-board-dark flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">7</span></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<!-- Row 6 -->
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">6</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<!-- Row 5 -->
+<div class="bg-surface-board-dark flex items-center justify-center relative bg-primary-container/80 border border-black"><span class="text-black font-bold text-xs absolute top-1 left-1 opacity-50">5</span></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center bg-primary-container/80 border border-black"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<!-- Row 4 -->
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">4</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<!-- Row 3 -->
+<div class="bg-surface-board-dark flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">3</span></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<!-- Row 2 -->
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">2</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<div class="bg-surface-board-light flex items-center justify-center"></div>
+<div class="bg-surface-board-dark flex items-center justify-center"></div>
+<!-- Row 1 -->
+<div class="bg-surface-board-dark flex items-center justify-center relative">
+<span class="text-on-surface font-bold text-xs absolute top-1 left-1 opacity-50">1</span>
+<span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">a</span>
+</div>
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">b</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">c</span></div>
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">d</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">e</span></div>
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">f</span></div>
+<div class="bg-surface-board-dark flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">g</span></div>
+<div class="bg-surface-board-light flex items-center justify-center relative"><span class="text-on-surface font-bold text-xs absolute bottom-1 right-1 opacity-50">h</span></div>
+</div>
+</div>
+<!-- Player Info (Bottom of Board) -->
+<div class="w-full max-w-[600px] flex items-center justify-between mt-4 bg-surface-container-low p-3 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-DEFAULT bg-surface-bright flex items-center justify-center border border-outline-variant overflow-hidden">
+<img alt="Player Avatar" class="w-full h-full object-cover" data-alt="A small, square profile picture of a young professional looking seriously at the camera, highly detailed, dramatic lighting, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW-M_8-HAsFekLOwIsScSgaePHwMITIIxynrNHwf3ewb3IkqWaB32leN4ipQzBYYmGm9BUMNGTU-CPkUCpOBaKu2gu543INBCfEUt7eqyH6_BanFQDrr7KlvqJlown2LahmabBILlK6AElSaF25hn4BK9eeQHrZ4UGvbPigkhHdim0IxR5s0hSUr-jRRkkZ7Z9kMwWBuqN1xnjGBaeJJbOhm67X_xKaXhEHOC9rXSnoCqgTsbaNUHoW9ZIIftHKXe9PAAPvaTkL6QM"/>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h2 class="font-label-bold text-label-bold text-on-surface uppercase">You</h2>
+<span class="bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-DEFAULT font-label-sm text-label-sm">1850</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<div class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-DEFAULT font-label-bold text-label-bold">08:45</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Controls & Info -->
+<aside class="w-80 bg-surface-container-low rounded-lg border border-outline-variant flex flex-col overflow-hidden shadow-sm h-[calc(100vh-6rem)]">
+<!-- PGN Move History -->
+<div class="flex-1 flex flex-col border-b border-outline-variant overflow-hidden">
+<div class="p-3 border-b border-outline-variant bg-surface-container-high flex justify-between items-center">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">Move History</h3>
+<div class="flex gap-1">
+<button class="p-1 text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">first_page</span></button>
+<button class="p-1 text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">navigate_before</span></button>
+<button class="p-1 text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">navigate_next</span></button>
+<button class="p-1 text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-sm">last_page</span></button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-2 font-body-sm text-body-sm">
+<!-- Zebra Striped List -->
+<div class="flex bg-surface-container px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">1.</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">e4</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">e5</span>
+</div>
+<div class="flex bg-transparent px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">2.</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Nf3</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Nc6</span>
+</div>
+<div class="flex bg-surface-container px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">3.</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Bb5</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">a6</span>
+</div>
+<div class="flex bg-transparent px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">4.</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Ba4</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Nf6</span>
+</div>
+<div class="flex bg-surface-container px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">5.</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">O-O</span>
+<span class="w-20 hover:bg-surface-variant px-1 rounded cursor-pointer">Be7</span>
+</div>
+<div class="flex bg-transparent px-2 py-1.5 rounded-sm">
+<span class="w-8 text-on-surface-variant">6.</span>
+<span class="w-20 bg-primary text-on-primary px-1 rounded font-medium cursor-pointer">Re1</span>
+<span class="w-20 text-on-surface-variant">...</span>
+</div>
+</div>
+</div>
+<!-- AI Insights Chat -->
+<div class="h-48 bg-surface-container-low p-4 flex flex-col gap-3">
+<h3 class="font-label-bold text-label-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">smart_toy</span>
+                        AI Insights
+                    </h3>
+<div class="bg-surface-container p-3 rounded-lg border border-outline-variant relative">
+<div class="absolute -top-2 left-4 w-3 h-3 bg-surface-container border-t border-l border-outline-variant rotate-45"></div>
+<p class="font-body-sm text-body-sm text-on-surface">
+                            The current position favors white <span class="text-primary font-medium">(+0.8)</span>. I recommend controlling the center with d4.
+                        </p>
+</div>
+<div class="mt-auto grid grid-cols-2 gap-2">
+<button class="bg-surface-variant hover:bg-surface-bright border border-outline-variant text-on-surface py-2 rounded-DEFAULT font-label-bold text-label-bold transition-colors">Hint</button>
+<button class="bg-error hover:bg-error-container text-on-error py-2 rounded-DEFAULT font-label-bold text-label-bold transition-colors">Resign</button>
+</div>
+</div>
+</aside>
+</main>
+</div>
+</body></html>
