@@ -10,8 +10,9 @@ interface TopBarProps {
 }
 
 export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps) {
-  const { profile, syncWithChessCom } = usePlayerProfile()
+  const { profile, syncWithChessCom, updateSettings } = usePlayerProfile()
   const [showSyncModal, setShowSyncModal] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const [chessComInput, setChessComInput] = useState('')
   const [isSyncing, setIsSyncing] = useState(false)
@@ -36,12 +37,12 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
       <header className="flex justify-between items-center h-14 px-4 md:px-6 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10 relative">
         <div className="flex items-center gap-2 md:gap-3">
           <div className="md:hidden w-8 h-8 relative flex-shrink-0 flex items-center justify-center">
-            <Image 
-              src="/logo.png" 
-              alt="Logo" 
-              fill 
-              className="object-contain" 
-              sizes="32px" 
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain"
+              sizes="32px"
             />
           </div>
           <h1 className="text-lg font-bold text-primary truncate">{title}</h1>
@@ -62,9 +63,9 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
 
           {profile.chessComUsername ? (
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-2 px-2 py-1 bg-surface-container-high hover:bg-surface-container-highest transition-colors rounded-full border border-outline-variant" 
+                className="flex items-center gap-2 px-2 py-1 bg-surface-container-high hover:bg-surface-container-highest transition-colors rounded-full border border-outline-variant"
                 title={`Linked as ${profile.chessComUsername}`}
               >
                 {profile.avatarUrl ? (
@@ -103,11 +104,17 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
 
                     {/* Menu Items */}
                     <div className="p-2 flex flex-col gap-1">
-                      <button className="flex items-center gap-3 px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-colors text-left w-full">
+                      <button
+                        onClick={() => {
+                          setShowDropdown(false)
+                          setShowSettingsModal(true)
+                        }}
+                        className="flex items-center gap-3 px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 rounded-lg transition-colors text-left w-full"
+                      >
                         <span className="material-symbols-outlined text-[18px]">settings</span>
                         Settings
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           setShowDropdown(false)
                           setShowSyncModal(true)
@@ -123,7 +130,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
               )}
             </div>
           ) : (
-            <button 
+            <button
               onClick={() => setShowSyncModal(true)}
               className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-primary/20"
             >
@@ -138,7 +145,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
       {showSyncModal && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-surface-container-low border border-outline-variant rounded-xl p-6 w-full max-w-sm shadow-2xl relative">
-            <button 
+            <button
               onClick={() => setShowSyncModal(false)}
               className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface"
             >
@@ -151,11 +158,11 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
             <p className="text-sm text-on-surface-variant mb-6 leading-relaxed">
               Enter your Chess.com username to sync your Rapid and Blitz ratings, and import your lifetime win/loss record.
             </p>
-            
+
             <div className="flex flex-col gap-3">
-              <input 
-                type="text" 
-                placeholder="Chess.com username" 
+              <input
+                type="text"
+                placeholder="Chess.com username"
                 value={chessComInput}
                 onChange={(e) => setChessComInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSync()}
@@ -168,7 +175,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
                   {syncError}
                 </p>
               )}
-              <button 
+              <button
                 onClick={handleSync}
                 disabled={isSyncing || !chessComInput.trim()}
                 className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
@@ -180,6 +187,95 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Settings Modal */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-container-low border border-outline-variant rounded-xl p-6 w-full max-w-md shadow-2xl relative">
+            <button
+              onClick={() => setShowSettingsModal(false)}
+              className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <h2 className="text-headline-sm font-bold text-on-surface mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">settings</span>
+              Board Settings
+            </h2>
+
+            <div className="space-y-8">
+              {/* Board Themes */}
+              <div>
+                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-4 block">Board Theme</label>
+                <div className="grid grid-cols-5 gap-3">
+                  {[
+                    { id: 'green', name: 'Green', dark: '#779556', light: '#ebecd0' },
+                    { id: 'blue', name: 'Blue', dark: '#4b7399', light: '#eae9d2' },
+                    { id: 'wood', name: 'Wood', dark: '#b58863', light: '#f0d9b5' },
+                    { id: 'dark', name: 'Dark', dark: '#4a4a4a', light: '#707070' },
+                    { id: 'purple', name: 'Purple', dark: '#8877b7', light: '#efefef' },
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => updateSettings({ boardTheme: t.id })}
+                      className={`group relative flex flex-col items-center gap-2 p-1 rounded-lg border-2 transition-all ${
+                        profile.settings.boardTheme === t.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
+                      }`}
+                    >
+                      <div className="w-full aspect-square rounded-md overflow-hidden grid grid-cols-2 grid-rows-2">
+                        <div style={{ backgroundColor: t.light }} />
+                        <div style={{ backgroundColor: t.dark }} />
+                        <div style={{ backgroundColor: t.dark }} />
+                        <div style={{ backgroundColor: t.light }} />
+                      </div>
+                      <span className="text-[10px] font-bold text-on-surface-variant group-hover:text-on-surface">{t.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Piece Sets */}
+              <div>
+                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-4 block">Piece Set</label>
+                <div className="grid grid-cols-5 gap-3">
+                  {[
+                    { id: 'standard', name: 'Standard' },
+                    { id: 'cburnett', name: 'Neo' },
+                    { id: 'merida', name: 'Classic' },
+                    { id: 'alpha', name: 'Modern' },
+                    { id: 'pirouetti', name: 'Fancy' },
+                  ].map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => updateSettings({ pieceSet: p.id })}
+                      className={`group flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${
+                        profile.settings.pieceSet === p.id ? 'border-primary bg-primary/5' : 'border-transparent hover:border-outline'
+                      }`}
+                    >
+                      <div className="w-10 h-10 flex items-center justify-center">
+                        <img
+                          src={p.id === 'standard'
+                            ? 'https://lichess1.org/assets/piece/cburnett/wK.svg' // Placeholder for standard
+                            : `https://lichess1.org/assets/piece/${p.id}/wK.svg`}
+                          alt={p.name}
+                          className="w-8 h-8 object-contain"
+                        />
+                      </div>
+                      <span className="text-[10px] font-bold text-on-surface-variant group-hover:text-on-surface">{p.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowSettingsModal(false)}
+              className="w-full bg-primary/10 text-primary py-3 rounded-lg font-bold hover:bg-primary/20 transition-all mt-8"
+            >
+              Done
+            </button>
           </div>
         </div>
       )}

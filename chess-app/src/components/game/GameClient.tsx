@@ -220,9 +220,8 @@ export default function GameClient({ modelId }: GameClientProps) {
           <span className="text-on-surface-variant text-sm">vs {opponent.name}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
-            state.turn === 'w' ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
-          }`}>
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${state.turn === 'w' ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
+            }`}>
             <div className={`w-2 h-2 rounded-full ${state.turn === 'w' ? 'bg-primary' : 'bg-on-surface-variant'}`} />
             {state.turn === 'w' ? 'Your Turn' : 'AI Turn'}
           </div>
@@ -250,6 +249,8 @@ export default function GameClient({ modelId }: GameClientProps) {
             isAIThinking={isAIThinking}
             onPlayerMove={handlePlayerMove}
             disabled={showResult}
+            boardTheme={profile.settings.boardTheme}
+            pieceSet={profile.settings.pieceSet}
           />
 
           {/* Human Player (bottom) */}

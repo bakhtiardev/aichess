@@ -6,6 +6,7 @@ import ChessBoardComponent from '@/components/game/ChessBoard'
 import { useChessGame } from '@/hooks/useChessGame'
 import Link from 'next/link'
 import TopBar from '@/components/layout/TopBar'
+import { usePlayerProfile } from '@/hooks/usePlayerProfile'
 
 interface LichessPuzzle {
   puzzle: {
@@ -25,10 +26,11 @@ export default function PuzzleClient() {
   const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(null)
   const [failedSquare, setFailedSquare] = useState<string | null>(null)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
-  const [pendingPromotion, setPendingPromotion] = useState<{from: string, to: string} | null>(null)
-  
+  const [pendingPromotion, setPendingPromotion] = useState<{ from: string, to: string } | null>(null)
+
   const gameHook = useChessGame()
   const { game, state, loadFen, makeMove } = gameHook
+  const { profile } = usePlayerProfile()
 
   const fetchPuzzle = useCallback(async () => {
     setLoading(true)
@@ -38,21 +40,21 @@ export default function PuzzleClient() {
     setHintMove(null)
     setFailedSquare(null)
     setPendingPromotion(null)
-    
+
     try {
       const res = await fetch('/api/random-puzzle')
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(errorData.error || `Server responded with ${res.status}`)
       }
-      
+
       const data = await res.json()
       if (data.error) throw new Error(data.error)
       if (!data.puzzle || !data.puzzle.fen) throw new Error('Invalid puzzle data received')
-      
+
       setPuzzle(data)
       loadFen(data.puzzle.fen)
-      
+
       // Fix orientation to the starting side to move
       const chess = new Chess(data.puzzle.fen)
       setOrientation(chess.turn() === 'w' ? 'white' : 'black')
@@ -74,7 +76,7 @@ export default function PuzzleClient() {
     // Check if it's a promotion move
     const moves = game.moves({ verbose: true })
     const isPromotion = moves.some(m => m.from === from && m.to === to && m.promotion)
-    
+
     // If it's a promotion and no piece was chosen yet, show the dialog
     if (isPromotion && !promotion) {
       setPendingPromotion({ from, to })
@@ -83,9 +85,9 @@ export default function PuzzleClient() {
 
     // Just check if the move is legal first. If not legal, early return false
     const isLegal = moves.some(m => m.from === from && m.to === to && (!promotion || m.promotion === promotion))
-    
+
     if (!isLegal) {
-      return false 
+      return false
     }
 
     setHintMove(null)
@@ -110,13 +112,13 @@ export default function PuzzleClient() {
       const success = makeMove(from, to, promotion)
       if (success) {
         setFailedSquare(to)
-        
+
         setTimeout(() => {
           game.undo()
           loadFen(game.fen())
           setFailedSquare(null)
         }, 1000)
-        
+
         return true
       }
     }
@@ -132,7 +134,7 @@ export default function PuzzleClient() {
         const from = nextMove.substring(0, 2)
         const to = nextMove.substring(2, 4)
         const promotion = nextMove.length === 5 ? nextMove[4] : undefined
-        
+
         const timer = setTimeout(() => {
           makeMove(from, to, promotion)
           setMoveIndex(moveIndex + 1)
@@ -160,7 +162,7 @@ export default function PuzzleClient() {
         <div>
           <h2 className="text-headline-sm text-on-surface font-bold mb-2">Could not load puzzle</h2>
           <p className="text-on-surface-variant max-w-md text-sm leading-relaxed mb-6">{error}</p>
-          <button 
+          <button
             onClick={fetchPuzzle}
             className="bg-primary text-on-primary px-8 py-3 rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
           >
@@ -185,9 +187,9 @@ export default function PuzzleClient() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Top Bar */}
-      <TopBar 
-        title="Random Puzzle" 
-        subtitle={puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'} 
+      <TopBar
+        title="Random Puzzle"
+        subtitle={puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'}
       />
 
       <main className="flex-1 flex flex-col lg:flex-row gap-6 p-6 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
@@ -198,12 +200,14 @@ export default function PuzzleClient() {
               gameHook={gameHook}
               playerColor={orientation}
               onPlayerMove={handlePlayerMove}
-               isAIThinking={status === 'playing' && moveIndex % 2 === 1}
+              isAIThinking={status === 'playing' && moveIndex % 2 === 1}
               thinkingText="Opponent move..."
               customArrows={hintMove ? [{ from: hintMove.from, to: hintMove.to, color: 'rgba(255, 170, 0, 0.8)' }] : undefined}
               failedSquare={failedSquare}
+              boardTheme={profile.settings.boardTheme}
+              pieceSet={profile.settings.pieceSet}
             />
-            
+
             {status === 'solved' && (
               <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center z-30 animate-in fade-in zoom-in duration-300">
                 <div className="bg-surface-container-high border-2 border-primary p-8 rounded-2xl shadow-2xl text-center max-w-xs mx-4">
@@ -212,7 +216,7 @@ export default function PuzzleClient() {
                   </div>
                   <h2 className="text-headline-sm font-black text-on-surface mb-2">Solved!</h2>
                   <p className="text-on-surface-variant text-sm mb-6">Excellent move. You've successfully completed the puzzle.</p>
-                  <button 
+                  <button
                     onClick={fetchPuzzle}
                     className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
                   >
@@ -243,7 +247,7 @@ export default function PuzzleClient() {
                       </button>
                     ))}
                   </div>
-                  <button 
+                  <button
                     onClick={() => setPendingPromotion(null)}
                     className="mt-4 text-sm text-on-surface-variant hover:text-on-surface transition-colors w-full py-2"
                   >
@@ -290,31 +294,30 @@ export default function PuzzleClient() {
             <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
               Find the best sequence of moves to solve the puzzle. Be careful, only the most precise moves will work!
             </p>
-            
-            <div className={`py-3 px-4 rounded-lg flex items-center justify-center gap-3 font-bold shadow-sm border ${
-              orientation === 'white' 
-                ? 'bg-surface-container-low border-outline-variant text-on-surface' 
-                : 'bg-[#2b2b2b] border-[#404040] text-white'
-            }`}>
+
+            <div className={`py-3 px-4 rounded-lg flex items-center justify-center gap-3 font-bold shadow-sm border ${orientation === 'white'
+              ? 'bg-surface-container-low border-outline-variant text-on-surface'
+              : 'bg-[#2b2b2b] border-[#404040] text-white'
+              }`}>
               <div className={`w-5 h-5 rounded-full border border-outline ${orientation === 'white' ? 'bg-white' : 'bg-black shadow-[inset_0_2px_4px_rgba(255,255,255,0.2)]'}`} />
               Find best move for {orientation === 'white' ? 'White' : 'Black'}
             </div>
             <div className="mt-8">
-               <button 
+              <button
                 onClick={() => {
-                   if (puzzle && status === 'playing') {
-                     const nextMove = puzzle.puzzle.solution[moveIndex]
-                     setHintMove({
-                       from: nextMove.substring(0, 2),
-                       to: nextMove.substring(2, 4)
-                     })
-                   }
+                  if (puzzle && status === 'playing') {
+                    const nextMove = puzzle.puzzle.solution[moveIndex]
+                    setHintMove({
+                      from: nextMove.substring(0, 2),
+                      to: nextMove.substring(2, 4)
+                    })
+                  }
                 }}
                 className="w-full py-3 px-4 border border-primary/30 text-primary rounded-lg text-sm font-bold hover:bg-primary/10 transition-all flex items-center justify-center gap-2"
-               >
-                 <span className="material-symbols-outlined text-sm">help_outline</span>
-                 Show Hint
-               </button>
+              >
+                <span className="material-symbols-outlined text-sm">help_outline</span>
+                Show Hint
+              </button>
             </div>
           </div>
         </aside>

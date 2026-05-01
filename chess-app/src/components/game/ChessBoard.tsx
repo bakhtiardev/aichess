@@ -14,6 +14,8 @@ interface ChessBoardProps {
   thinkingText?: string
   customArrows?: { from: string, to: string, color?: string }[]
   failedSquare?: string | null
+  boardTheme?: string
+  pieceSet?: string
 }
 
 export default function ChessBoardComponent({
@@ -25,10 +27,41 @@ export default function ChessBoardComponent({
   thinkingText = 'AI is thinking...',
   customArrows = [],
   failedSquare = null,
+  boardTheme = 'green',
+  pieceSet = 'cburnett',
 }: ChessBoardProps) {
   const { state, getLegalMoves } = gameHook
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
   const [legalSquares, setLegalSquares] = useState<Record<string, { background: string; borderRadius?: string }>>({})
+  
+  const THEMES: Record<string, { dark: string; light: string }> = {
+    green: { dark: '#779556', light: '#ebecd0' },
+    blue: { dark: '#4b7399', light: '#eae9d2' },
+    wood: { dark: '#b58863', light: '#f0d9b5' },
+    dark: { dark: '#4a4a4a', light: '#707070' },
+    purple: { dark: '#8877b7', light: '#efefef' },
+  }
+
+  const theme = THEMES[boardTheme] || THEMES.green
+
+  const getCustomPieces = (set: string) => {
+    const pieces = ['wP', 'wN', 'wB', 'wR', 'wQ', 'wK', 'bP', 'bN', 'bB', 'bR', 'bQ', 'bK']
+    const customPieces: Record<string, any> = {}
+    
+    pieces.forEach(p => {
+      customPieces[p] = ({ squareWidth }: { squareWidth: number }) => (
+        <div 
+          style={{
+            width: squareWidth,
+            height: squareWidth,
+            backgroundImage: `url(https://lichess1.org/assets/piece/${set}/${p}.svg)`,
+            backgroundSize: '100%',
+          }}
+        />
+      )
+    })
+    return customPieces
+  }
 
   const isPlayerTurn =
     (playerColor === 'white' && state.turn === 'w') ||
@@ -140,8 +173,9 @@ export default function ChessBoardComponent({
             onPieceDrop,
             onSquareClick,
             boardOrientation: playerColor,
-            darkSquareStyle: { backgroundColor: '#779556' },
-            lightSquareStyle: { backgroundColor: '#ebecd0' },
+            darkSquareStyle: { backgroundColor: theme.dark },
+            lightSquareStyle: { backgroundColor: theme.light },
+            customPieces: pieceSet === 'standard' ? undefined : getCustomPieces(pieceSet),
             squareStyles: customSquareStyles,
             arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
             allowDrawingArrows: true,

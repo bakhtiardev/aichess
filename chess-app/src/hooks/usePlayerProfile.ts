@@ -25,6 +25,10 @@ export interface PlayerProfile {
     rapid?: { elo: number, wins: number, losses: number, draws: number }
     blitz?: { elo: number, wins: number, losses: number, draws: number }
   }
+  settings: {
+    boardTheme: string
+    pieceSet: string
+  }
 }
 
 const DEFAULT_PROFILE: PlayerProfile = {
@@ -35,6 +39,10 @@ const DEFAULT_PROFILE: PlayerProfile = {
   draws: 0,
   recentMatches: [],
   ratingHistory: [1200, 1200, 1200, 1200, 1200, 1200, 1200],
+  settings: {
+    boardTheme: 'green',
+    pieceSet: 'neo',
+  },
 }
 
 export function usePlayerProfile() {
@@ -48,6 +56,10 @@ export function usePlayerProfile() {
         setProfile({
           ...DEFAULT_PROFILE,
           ...parsed,
+          settings: {
+            ...DEFAULT_PROFILE.settings,
+            ...parsed.settings,
+          },
           // Ensure ratingHistory exists and is an array
           ratingHistory: Array.isArray(parsed.ratingHistory) 
             ? parsed.ratingHistory 
@@ -149,5 +161,16 @@ export function usePlayerProfile() {
     }
   }, [profile, saveProfile])
 
-  return { profile, recordGame, winRate, totalGames, saveProfile, syncWithChessCom }
+  const updateSettings = useCallback((newSettings: Partial<PlayerProfile['settings']>) => {
+    const updated: PlayerProfile = {
+      ...profile,
+      settings: {
+        ...profile.settings,
+        ...newSettings,
+      },
+    }
+    saveProfile(updated)
+  }, [profile, saveProfile])
+
+  return { profile, recordGame, winRate, totalGames, saveProfile, syncWithChessCom, updateSettings }
 }
