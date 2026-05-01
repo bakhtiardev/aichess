@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 }
 
 const PROVIDER_META: Record<string, { label: string; icon: string; badge: string; color: string }> = {
-  gemini: { label: 'Google Gemini', icon: 'psychology', badge: 'Cloud · Free Key', color: 'text-blue-400' },
-  groq:   { label: 'Groq (Free API)', icon: 'bolt', badge: 'Cloud · Free Key', color: 'text-orange-400' },
-  ollama: { label: 'Ollama (Local)', icon: 'computer', badge: 'Local · No Key', color: 'text-green-400' },
+  gemini: { label: 'Google DeepMind', icon: 'psychology', badge: 'Frontier Intelligence', color: 'text-blue-400' },
+  groq: { label: 'Groq · World\'s Fastest', icon: 'bolt', badge: 'Lightning Fast', color: 'text-orange-400' },
+  ollama: { label: 'Ollama', icon: 'computer', badge: 'On-Device AI', color: 'text-green-400' },
 }
 
 export default function LobbyPage() {
@@ -57,56 +57,9 @@ export default function LobbyPage() {
                   <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-surface-container-high border border-outline-variant text-on-surface-variant rounded-full">
                     {meta.badge}
                   </span>
-                  {providerType === 'groq' && (
-                    <a
-                      href="https://console.groq.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-auto text-xs text-primary hover:underline flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                      Get free key
-                    </a>
-                  )}
-                  {providerType === 'ollama' && (
-                    <a
-                      href="https://ollama.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-auto text-xs text-primary hover:underline flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                      Get Ollama
-                    </a>
-                  )}
                 </div>
 
-                {/* Setup note for providers requiring setup */}
-                {providerType === 'groq' && (
-                  <div className="mb-4 p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg flex items-start gap-2">
-                    <span className="material-symbols-outlined text-orange-400 text-[18px] mt-0.5">info</span>
-                    <p className="text-xs text-on-surface-variant">
-                      Add{' '}
-                      <code className="px-1 py-0.5 bg-surface-container-highest rounded text-orange-400 font-mono">GROQ_API_KEY=...</code>
-                      {' '}to your <code className="px-1 py-0.5 bg-surface-container-highest rounded font-mono">.env.local</code> file.
-                      Get a free key at{' '}
-                      <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">console.groq.com</a>.
-                    </p>
-                  </div>
-                )}
-                {providerType === 'ollama' && (
-                  <div className="mb-4 p-3 bg-green-500/5 border border-green-500/20 rounded-lg flex items-start gap-2">
-                    <span className="material-symbols-outlined text-green-400 text-[18px] mt-0.5">info</span>
-                    <p className="text-xs text-on-surface-variant">
-                      Runs 100% locally. Install{' '}
-                      <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Ollama</a>,
-                      then run:{' '}
-                      <code className="px-1 py-0.5 bg-surface-container-highest rounded text-green-400 font-mono">ollama serve</code>
-                      {' '}and{' '}
-                      <code className="px-1 py-0.5 bg-surface-container-highest rounded text-green-400 font-mono">ollama pull llama3</code>
-                    </p>
-                  </div>
-                )}
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {opponents.map((opponent) => (
