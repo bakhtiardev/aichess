@@ -274,7 +274,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
               onClick={() => setShowSettingsModal(false)}
               className="w-full bg-primary/10 text-primary py-3 rounded-lg font-bold hover:bg-primary/20 transition-all mt-8"
             >
-              Done
+              Save changes
             </button>
           </div>
         </div>
