@@ -21,6 +21,7 @@ export default function PuzzleClient() {
   const [error, setError] = useState<string | null>(null)
   const [moveIndex, setMoveIndex] = useState(0)
   const [status, setStatus] = useState<'playing' | 'solved' | 'failed'>('playing')
+  const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(null)
   
   const gameHook = useChessGame()
   const { game, state, loadFen, makeMove } = gameHook
@@ -30,6 +31,7 @@ export default function PuzzleClient() {
     setError(null)
     setStatus('playing')
     setMoveIndex(0)
+    setHintMove(null)
     
     try {
       const res = await fetch('/api/daily-puzzle')
@@ -59,9 +61,19 @@ export default function PuzzleClient() {
   const handlePlayerMove = (from: string, to: string, promotion?: string): boolean => {
     if (!puzzle || status !== 'playing') return false
 
+    // Just check if the move is legal first. If not legal, early return false
+    const moves = game.moves({ verbose: true })
+    const isLegal = moves.some(m => m.from === from && m.to === to)
+    
+    if (!isLegal) {
+      return false 
+    }
+
+    setHintMove(null)
+
     const expectedMove = puzzle.puzzle.solution[moveIndex]
     // UCI format: e2e4 or e7e8q
-    const moveNotation = `${from}${to}${promotion || ''}`
+    const moveNotation = `${from}${to}${promotion ? promotion : ''}`
 
     if (moveNotation === expectedMove) {
       const success = makeMove(from, to, promotion)
@@ -154,6 +166,7 @@ export default function PuzzleClient() {
               onPlayerMove={handlePlayerMove}
               isAIThinking={status === 'playing' && moveIndex % 2 === 1}
               thinkingText="Opponent move..."
+              customArrows={hintMove ? [{ from: hintMove.from, to: hintMove.to, color: 'rgba(255, 170, 0, 0.8)' }] : undefined}
             />
             
             {status === 'solved' && (
@@ -187,6 +200,7 @@ export default function PuzzleClient() {
                       loadFen(puzzle!.puzzle.fen)
                       setMoveIndex(0)
                       setStatus('playing')
+                      setHintMove(null)
                     }}
                     className="w-full bg-surface-variant text-on-surface py-3 rounded-lg font-bold hover:bg-surface-bright transition-all"
                   >
@@ -239,7 +253,10 @@ export default function PuzzleClient() {
                 onClick={() => {
                    if (puzzle && status === 'playing') {
                      const nextMove = puzzle.puzzle.solution[moveIndex]
-                     alert(`Hint: The next move starts from ${nextMove.substring(0, 2)}`)
+                     setHintMove({
+                       from: nextMove.substring(0, 2),
+                       to: nextMove.substring(2, 4)
+                     })
                    }
                 }}
                 className="w-full py-3 px-4 border border-primary/30 text-primary rounded-lg text-sm font-bold hover:bg-primary/10 transition-all flex items-center justify-center gap-2"

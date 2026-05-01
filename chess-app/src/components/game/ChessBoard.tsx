@@ -12,6 +12,7 @@ interface ChessBoardProps {
   onPlayerMove: (from: string, to: string, promotion?: string) => boolean
   disabled?: boolean
   thinkingText?: string
+  customArrows?: { from: string, to: string, color?: string }[]
 }
 
 export default function ChessBoardComponent({
@@ -21,6 +22,7 @@ export default function ChessBoardComponent({
   onPlayerMove,
   disabled = false,
   thinkingText = 'AI is thinking...',
+  customArrows = [],
 }: ChessBoardProps) {
   const { state, getLegalMoves } = gameHook
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
@@ -132,6 +134,7 @@ export default function ChessBoardComponent({
             darkSquareStyle: { backgroundColor: '#779556' },
             lightSquareStyle: { backgroundColor: '#ebecd0' },
             squareStyles: customSquareStyles,
+            arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
             allowDrawingArrows: false,
             animationDurationInMs: 150,
           }}
