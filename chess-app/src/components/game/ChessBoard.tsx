@@ -96,13 +96,13 @@ export default function ChessBoardComponent({
           const piece = gameHook.game.get(sq as Square)
           if (piece) {
             highlights[sq] = {
-              background: 'radial-gradient(circle, rgba(159,214,104,0.4) 60%, transparent 65%)',
+              background: 'radial-gradient(circle, transparent 0%, transparent 68%, rgba(0, 0, 0, 0.18) 69%, rgba(0, 0, 0, 0.18) 100%)',
               borderRadius: '0',
             }
           } else {
             highlights[sq] = {
-              background: 'radial-gradient(circle, rgba(159,214,104,0.6) 30%, transparent 35%)',
-              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(0, 0, 0, 0.18) 22%, transparent 23%)',
+              borderRadius: '0',
             }
           }
         })

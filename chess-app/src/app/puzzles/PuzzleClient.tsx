@@ -24,6 +24,7 @@ export default function PuzzleClient() {
   const [hintMove, setHintMove] = useState<{ from: string; to: string } | null>(null)
   const [failedSquare, setFailedSquare] = useState<string | null>(null)
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
+  const [pendingPromotion, setPendingPromotion] = useState<{from: string, to: string} | null>(null)
   
   const gameHook = useChessGame()
   const { game, state, loadFen, makeMove } = gameHook
@@ -35,9 +36,10 @@ export default function PuzzleClient() {
     setMoveIndex(0)
     setHintMove(null)
     setFailedSquare(null)
+    setPendingPromotion(null)
     
     try {
-      const res = await fetch('/api/daily-puzzle')
+      const res = await fetch('/api/random-puzzle')
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(errorData.error || `Server responded with ${res.status}`)
@@ -54,7 +56,7 @@ export default function PuzzleClient() {
       const chess = new Chess(data.puzzle.fen)
       setOrientation(chess.turn() === 'w' ? 'white' : 'black')
     } catch (err: any) {
-      setError(err.message || 'Could not load daily puzzle. Please try again later.')
+      setError(err.message || 'Could not load puzzle. Please try again later.')
       console.error('Puzzle loading failed:', err)
     } finally {
       setLoading(false)
@@ -68,9 +70,18 @@ export default function PuzzleClient() {
   const handlePlayerMove = (from: string, to: string, promotion?: string): boolean => {
     if (!puzzle || status !== 'playing') return false
 
-    // Just check if the move is legal first. If not legal, early return false
+    // Check if it's a promotion move
     const moves = game.moves({ verbose: true })
-    const isLegal = moves.some(m => m.from === from && m.to === to)
+    const isPromotion = moves.some(m => m.from === from && m.to === to && m.promotion)
+    
+    // If it's a promotion and no piece was chosen yet, show the dialog
+    if (isPromotion && !promotion) {
+      setPendingPromotion({ from, to })
+      return true // Return true to temporarily accept the drop, though it might snap back depending on react-chessboard version
+    }
+
+    // Just check if the move is legal first. If not legal, early return false
+    const isLegal = moves.some(m => m.from === from && m.to === to && (!promotion || m.promotion === promotion))
     
     if (!isLegal) {
       return false 
@@ -134,7 +145,7 @@ export default function PuzzleClient() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-background">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-on-surface-variant font-medium">Loading daily puzzle...</p>
+        <p className="text-on-surface-variant font-medium">Loading puzzle...</p>
       </div>
     )
   }
@@ -159,6 +170,15 @@ export default function PuzzleClient() {
     )
   }
 
+  const handlePromotionSelect = (piece: string) => {
+    if (pendingPromotion) {
+      const { from, to } = pendingPromotion
+      setPendingPromotion(null)
+      // Call handlePlayerMove again but this time with the promotion piece
+      handlePlayerMove(from, to, piece)
+    }
+  }
+
 
 
   return (
@@ -169,7 +189,7 @@ export default function PuzzleClient() {
           <Link href="/" className="text-on-surface-variant hover:text-on-surface transition-colors">
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </Link>
-          <h1 className="text-sm font-bold text-primary">Daily Puzzle</h1>
+          <h1 className="text-sm font-bold text-primary">Random Puzzle</h1>
           <span className="text-outline-variant">/</span>
           <span className="text-on-surface-variant text-sm">Rating: {puzzle?.puzzle.rating}</span>
         </div>
@@ -196,7 +216,7 @@ export default function PuzzleClient() {
                     <span className="material-symbols-outlined text-primary text-4xl">check_circle</span>
                   </div>
                   <h2 className="text-headline-sm font-black text-on-surface mb-2">Solved!</h2>
-                  <p className="text-on-surface-variant text-sm mb-6">Excellent move. You've successfully completed the daily puzzle.</p>
+                  <p className="text-on-surface-variant text-sm mb-6">Excellent move. You've successfully completed the puzzle.</p>
                   <button 
                     onClick={fetchPuzzle}
                     className="w-full bg-primary text-on-primary py-3 rounded-lg font-bold shadow-lg shadow-primary/20 hover:brightness-110 transition-all"
@@ -207,6 +227,36 @@ export default function PuzzleClient() {
               </div>
             )}
 
+            {pendingPromotion && (
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-40 animate-in fade-in zoom-in duration-200">
+                <div className="bg-surface-container-high border border-outline-variant p-6 rounded-2xl shadow-2xl text-center max-w-[280px] w-full">
+                  <h3 className="text-title-md font-bold text-on-surface mb-4">Promote to</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { id: 'q', name: 'Queen', icon: orientation === 'white' ? '♕' : '♛' },
+                      { id: 'r', name: 'Rook', icon: orientation === 'white' ? '♖' : '♜' },
+                      { id: 'b', name: 'Bishop', icon: orientation === 'white' ? '♗' : '♝' },
+                      { id: 'n', name: 'Knight', icon: orientation === 'white' ? '♘' : '♞' }
+                    ].map(p => (
+                      <button
+                        key={p.id}
+                        onClick={() => handlePromotionSelect(p.id)}
+                        className="flex flex-col items-center justify-center gap-2 p-4 bg-surface-container hover:bg-primary/10 hover:border-primary/50 border border-transparent rounded-xl transition-all group"
+                      >
+                        <span className="text-4xl text-on-surface group-hover:text-primary transition-colors">{p.icon}</span>
+                        <span className="text-xs font-medium text-on-surface-variant group-hover:text-primary transition-colors">{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => setPendingPromotion(null)}
+                    className="mt-4 text-sm text-on-surface-variant hover:text-on-surface transition-colors w-full py-2"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>
@@ -227,11 +277,11 @@ export default function PuzzleClient() {
               </div>
               <div className="flex justify-between items-center py-2 border-b border-outline-variant/30">
                 <span className="text-on-surface-variant text-sm">Theme</span>
-                <span className="text-on-surface font-medium text-sm">Daily Challenge</span>
+                <span className="text-on-surface font-medium text-sm">Random Tactics</span>
               </div>
               <div className="pt-2">
                 <p className="text-xs text-on-surface-variant italic leading-relaxed">
-                  Puzzles are sourced directly from Lichess. Solve them to improve your tactical awareness.
+                  Puzzles are sourced from Chess.com. Solve them to improve your tactical awareness.
                 </p>
               </div>
             </div>
@@ -242,11 +292,18 @@ export default function PuzzleClient() {
               <span className="material-symbols-outlined text-primary text-xl">lightbulb</span>
               Goal
             </h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Find the best sequence of moves for {orientation === 'white' ? 'White' : 'Black'}. 
-              Be careful, only the most precise moves will solve the puzzle!
+            <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              Find the best sequence of moves to solve the puzzle. Be careful, only the most precise moves will work!
             </p>
             
+            <div className={`py-3 px-4 rounded-lg flex items-center justify-center gap-3 font-bold shadow-sm border ${
+              orientation === 'white' 
+                ? 'bg-surface-container-low border-outline-variant text-on-surface' 
+                : 'bg-[#2b2b2b] border-[#404040] text-white'
+            }`}>
+              <div className={`w-5 h-5 rounded-full border border-outline ${orientation === 'white' ? 'bg-white' : 'bg-black shadow-[inset_0_2px_4px_rgba(255,255,255,0.2)]'}`} />
+              Find best move for {orientation === 'white' ? 'White' : 'Black'}
+            </div>
             <div className="mt-8">
                <button 
                 onClick={() => {
