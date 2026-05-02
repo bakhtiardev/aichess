@@ -22,11 +22,11 @@ export default function LobbyPage() {
               <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">Live Arena</span>
             </div>
             <h2 className="text-5xl md:text-7xl font-black text-on-surface tracking-tighter mb-4 uppercase">
-              Select Your <span className="text-primary">Champion</span>
+              Select Your <span className="text-primary">AI Model</span>
             </h2>
             <p className="text-on-surface-variant max-w-2xl mx-auto text-base md:text-lg leading-relaxed opacity-80">
-              Enter the arena and challenge the world's most sophisticated chess intelligences. 
-              Each champion features unique tactical evolution and distinct strategic patterns.
+              Enter the arena and challenge the world's most sophisticated chess intelligences.
+              Each AI model features unique tactical evolution and distinct strategic patterns.
             </p>
           </div>
 
@@ -39,24 +39,24 @@ export default function LobbyPage() {
               >
                 {/* Character Image Section */}
                 <div className="relative h-full w-full overflow-hidden">
-                  <img 
-                    src={opponent.avatarUrl} 
+                  <img
+                    src={opponent.avatarUrl}
                     alt={opponent.name}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1"
                   />
-                  
+
                   {/* Overlays */}
                   <div className="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/40 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-100" />
-                  
+
                   {/* Scanning Effect */}
                   <div className="absolute top-0 left-0 w-full h-1 bg-primary/40 blur-sm animate-scan opacity-0 group-hover:opacity-100 z-30" />
-                  
+
 
 
                   {/* Minimal Info (Always Visible) */}
                   <div className="absolute bottom-0 left-0 w-full p-8 transition-transform duration-500 group-hover:-translate-y-48 z-20">
                     <div className="flex items-center gap-3 mb-3">
-                       <div className="px-3 py-1 bg-primary/20 backdrop-blur-md rounded-lg border border-primary/30">
+                      <div className="px-3 py-1 bg-primary/20 backdrop-blur-md rounded-lg border border-primary/30">
                         <span className="text-[11px] font-black text-primary tracking-tighter">LVL {Math.floor(opponent.elo / 100)}</span>
                       </div>
                       <span className="text-[10px] font-black text-on-surface-variant/70 uppercase tracking-widest">
@@ -74,12 +74,12 @@ export default function LobbyPage() {
 
                   {/* Hover Reveal (Sliding up) */}
                   <div className="absolute inset-x-0 bottom-0 p-8 pt-16 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-surface-container-high via-surface-container-high to-transparent z-20">
-                     <div className="space-y-5">
+                    <div className="space-y-5">
                       <div className="space-y-1">
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Strategy Profile</p>
                         <p className="text-sm font-bold text-on-surface">{opponent.playstyle}</p>
                       </div>
-                      
+
                       <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-3">
                         {opponent.description}
                       </p>
@@ -104,10 +104,7 @@ export default function LobbyPage() {
                     href={`/play/${opponent.id}`}
                     className="w-full bg-primary text-on-primary hover:brightness-110 active:scale-[0.98] transition-all duration-300 font-black text-sm py-5 rounded-[1.5rem] shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group/btn"
                   >
-                    <span className="material-symbols-outlined text-2xl transition-transform duration-500 group-hover/btn:scale-125 group-hover/btn:rotate-12">
-                      bolt
-                    </span>
-                    ENGAGE CHAMPION
+                    CHALLENGE MODEL
                   </Link>
                 </div>
 
