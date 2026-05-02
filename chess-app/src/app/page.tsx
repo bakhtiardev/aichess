@@ -66,9 +66,7 @@ export default function LobbyPage() {
                   {/* Minimal Info (Always Visible) */}
                   <div className="absolute bottom-0 left-0 w-full p-8 transition-transform duration-500 group-hover:-translate-y-32 z-20">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="px-3 py-1 bg-primary/20 backdrop-blur-md rounded-lg border border-primary/30">
-                        <span className="text-[11px] font-black text-primary tracking-tighter">LVL {Math.floor(opponent.elo / 100)}</span>
-                      </div>
+
                       <div className="flex items-center gap-2">
                         {PROVIDER_ICONS[opponent.providerType] && (
                           <img
