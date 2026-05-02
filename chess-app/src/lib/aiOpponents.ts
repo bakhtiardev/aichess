@@ -123,7 +123,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'ollama',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
-    avatarUrl: '/avatars/llama.png',
+    avatarUrl: '/avatars/ollama-33.png',
   },
   {
     id: 'groq-llama4-scout',

@@ -100,7 +100,7 @@ export default function LobbyPage() {
                       {/* Win Rate Bar */}
                       <div className="space-y-3">
                         <div className="flex justify-between text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
-                          <span>Evolution Tier</span>
+                          <span>Win Rate</span>
                           <span>{opponent.winRate}%</span>
                         </div>
                         <div className="h-2 bg-surface-container-highest rounded-full overflow-hidden">
