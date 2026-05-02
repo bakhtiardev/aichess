@@ -73,217 +73,140 @@ export default function ChessBoardComponent({
 
   const canInteract = isPlayerTurn && !isAIThinking && !disabled && !state.isGameOver
 
+  // Highlight squares
   const customSquareStyles: Record<string, React.CSSProperties> = {}
 
+  // Last move highlight
   if (state.lastMove) {
-    customSquareStyles[state.lastMove.from] = { backgroundColor: 'rgba(159, 214, 104, 0.25)' }
-    customSquareStyles[state.lastMove.to] = { backgroundColor: 'rgba(159, 214, 104, 0.35)' }
+    customSquareStyles[state.lastMove.from] = {
+      backgroundColor: 'rgba(159, 214, 104, 0.25)',
+    }
+    customSquareStyles[state.lastMove.to] = {
+      backgroundColor: 'rgba(159, 214, 104, 0.35)',
+    }
   }
 
+  // Selected square
   if (selectedSquare) {
-    customSquareStyles[selectedSquare] = { backgroundColor: 'rgba(159, 214, 104, 0.5)' }
+    customSquareStyles[selectedSquare] = {
+      backgroundColor: 'rgba(159, 214, 104, 0.5)',
+    }
   }
 
+  // Failed square highlight
   if (failedSquare) {
-    customSquareStyles[failedSquare] = { backgroundColor: 'rgba(239, 68, 68, 0.4)' }
+    customSquareStyles[failedSquare] = {
+      backgroundColor: 'rgba(239, 68, 68, 0.4)',
+    }
   }
 
+  // Legal move dots
   Object.entries(legalSquares).forEach(([sq, style]) => {
-    customSquareStyles[sq] = { ...customSquareStyles[sq], ...style }
+    customSquareStyles[sq] = {
+      ...customSquareStyles[sq],
+      ...style,
+    }
   })
 
-const onSquareClick = useCallback(
-  ({ piece, square }: { piece: any; square: any }) => {
-    if (!canInteract) return
+  const onSquareClick = useCallback(
+    ({ square }: { square: string }) => {
+      if (!canInteract) return
 
-    if (selectedSquare) {
-      const success = onPlayerMove(selectedSquare, square)
-      if (success) {
+      if (selectedSquare) {
+        // Try to make a move
+        const success = onPlayerMove(selectedSquare, square)
+        if (success) {
+          setSelectedSquare(null)
+          setLegalSquares({})
+          return
+        }
+      }
+
+      // Select the square if it has a piece of the player's color
+      const moves = getLegalMoves(square)
+      if (moves.length > 0) {
+        setSelectedSquare(square)
+        const highlights: Record<string, React.CSSProperties> = {}
+        moves.forEach((sq) => {
+          // Check if target square has a piece (capture)
+          const piece = gameHook.game.get(sq as Square)
+          if (piece) {
+            // Highlight capture squares with ring around border
+            highlights[sq] = {
+               background: 'radial-gradient(circle, transparent 0%, transparent 68%, rgba(0, 0, 0, 0.18) 69%, rgba(0, 0, 0, 0.18) 100%)',
+              borderRadius: '0',
+            }
+          } else {
+            // Highlight empty squares with center dot
+            highlights[sq] = {
+              background: 'radial-gradient(circle, rgba(0, 0, 0, 0.25) 25%, transparent 25%)',
+            }
+          }
+        })
+        setLegalSquares(highlights)
+      } else {
         setSelectedSquare(null)
         setLegalSquares({})
-        return
       }
-    }
+    },
+    [canInteract, selectedSquare, onPlayerMove, getLegalMoves, gameHook.game]
+  )
 
-    const moves = getLegalMoves(square)
-    if (moves.length > 0) {
-      setSelectedSquare(square)
-      const highlights: Record<string, React.CSSProperties> = {}
-      moves.forEach((sq) => {
-        const piece = gameHook.game.get(sq as Square)
-        if (piece) {
-          highlights[sq] = {
-             background: 'radial-gradient(circle, transparent 0%, transparent 68%, rgba(0, 0, 0, 0.18) 69%, rgba(0, 0, 0, 0.18) 100%)',
-            borderRadius: '0',
-          }
-        } else {
-          highlights[sq] = {
-            background: 'radial-gradient(circle, rgba(0, 0, 0, 0.25) 25%, transparent 25%)',
-          }
-        }
-      })
-      setLegalSquares(highlights)
-    } else {
+  const onPieceDrop = useCallback(
+    ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }): boolean => {
+      if (!canInteract || !targetSquare) return false
       setSelectedSquare(null)
       setLegalSquares({})
-    }
-  },
-  [canInteract, selectedSquare, onPlayerMove, getLegalMoves, gameHook.game]
-)
-
-const onPieceDrop = useCallback(
-  ({ piece, sourceSquare, targetSquare }: { piece: any; sourceSquare: any; targetSquare: any }): boolean => {
-    if (!canInteract || !targetSquare) return false
-    setSelectedSquare(null)
-    setLegalSquares({})
-    return onPlayerMove(sourceSquare, targetSquare)
-  },
-  [canInteract, onPlayerMove]
-)
+      return onPlayerMove(sourceSquare, targetSquare)
+    },
+    [canInteract, onPlayerMove]
+  )
 
   return (
     <div className="w-full flex-1 min-h-0 flex items-center justify-center">
       <div
         style={{ maxHeight: '720px', maxWidth: '720px' }}
-        className={`aspect-square h-full max-h-full max-w-full relative rounded-lg overflow-hidden border-4 ${
-          state.isCheck && !state.isGameOver
-            ? 'border-error shadow-[0_0_30px_rgba(255,180,171,0.3)]'
-            : 'border-surface-container-highest'
-        } shadow-2xl transition-all duration-300`}
+        className={`aspect-square h-full max-h-full max-w-full relative rounded-lg overflow-hidden border-4 ${state.isCheck && !state.isGameOver
+          ? 'border-error shadow-[0_0_30px_rgba(255,180,171,0.3)]'
+          : 'border-surface-container-highest'
+          } shadow-2xl transition-all duration-300`}
       >
-     {/* <Chessboard
-  key={pieceSet}
-  options={{
-    position: state.fen,
-    onPieceDrop,
-    onSquareClick,
-    boardOrientation: playerColor,
-    darkSquareStyle: { backgroundColor: theme.dark },
-    lightSquareStyle: { backgroundColor: theme.light },
-    pieces: customPieces,
-    squareStyles: customSquareStyles,
-    // Note: In this version, arrows are often start/end objects
-   arrows: customArrows.map(a => ({ 
-  startSquare: a.from, 
-  endSquare: a.to, 
-  color: a.color || 'rgb(255, 170, 0)' 
-})),
-    allowDrawingArrows: true,
-    animationDurationInMs: 150, // Note: No 'InMs' suffix in this version
-    // Use 'customBoardSquare' instead of 'customSquare'
-    customBoardSquare: ({ children, square, style }) => (
-      <div
-        style={{ ...style, position: 'relative' }}
-        className={failedSquare === square ? 'border-2 border-error z-10' : ''}
-      >
-        {children}
-        {failedSquare === square && (
-          <div className="absolute top-0 right-0 z-[100] translate-x-1/4 -translate-y-1/4 animate-in fade-in zoom-in duration-200">
-            <div className="bg-white rounded-full flex items-center justify-center shadow-lg">
-              <span
-                className="material-symbols-outlined text-[#f25e5e] text-[22px] md:text-[28px] lg:text-[32px]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                cancel
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-    ),
-  }}
-/> */}
-       {/* <Chessboard
-  key={pieceSet}
-  options={{
-    // In v5, position belongs directly inside the options object
-    position: state.fen,
-    onPieceDrop,
-    onSquareClick,
-    boardOrientation: playerColor,
-    
-    // In v5, these are the exact names inside the options object
-    darkSquareStyle: { backgroundColor: theme.dark },
-    lightSquareStyle: { backgroundColor: theme.light },
-    customPieces: customPieces,
-    customSquareStyles: customSquareStyles,
-    
-    // Arrows format for v5 inside options
-    customArrows: customArrows.map(a => [
-      a.from, 
-      a.to, 
-      a.color || 'rgb(255, 170, 0)'
-    ]),
-    
-    areArrowsAllowed: true,
-    animationDuration: 150,
-
-    // In v5, the custom square renderer is named 'customSquare'
-    customSquare: ({ children, square, style }) => (
-      <div
-        style={{ ...style, position: 'relative' }}
-        className={failedSquare === square ? 'border-2 border-error z-10' : ''}
-      >
-        {children}
-        {failedSquare === square && (
-          <div className="absolute top-0 right-0 z-[100] translate-x-1/4 -translate-y-1/4 animate-in fade-in zoom-in duration-200">
-            <div className="bg-white rounded-full flex items-center justify-center shadow-lg">
-              <span
-                className="material-symbols-outlined text-[#f25e5e] text-[22px] md:text-[28px] lg:text-[32px]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                cancel
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-    ),
-  }}
-/> */}
-
-<Chessboard
-  key={pieceSet}
-  {...({
-    position: state.fen,
-    onPieceDrop: (sourceSquare: string, targetSquare: string, piece: string) => 
-      onPieceDrop({ piece, sourceSquare, targetSquare }),
-    onSquareClick: (square: string, piece: string) => 
-      onSquareClick({ piece, square }),
-    boardOrientation: playerColor,
-    customDarkSquareStyle: { backgroundColor: theme.dark },
-    customLightSquareStyle: { backgroundColor: theme.light },
-    customPieces: customPieces,
-    customSquareStyles: customSquareStyles,
-    customArrows: customArrows.map(a => [
-      a.from, 
-      a.to, 
-      a.color || 'rgb(255, 170, 0)'
-    ]),
-    animationDuration: 150,
-    areArrowsAllowed: true,
-    customSquare: ({ children, square, style }: any) => (
-      <div
-        style={{ ...style, position: 'relative' }}
-        className={failedSquare === square ? 'border-2 border-error z-10' : ''}
-      >
-        {children}
-        {failedSquare === square && (
-          <div className="absolute top-0 right-0 z-[100] translate-x-1/4 -translate-y-1/4 animate-in fade-in zoom-in duration-200">
-            <div className="bg-white rounded-full flex items-center justify-center shadow-lg">
-              <span
-                className="material-symbols-outlined text-[#f25e5e] text-[22px] md:text-[28px] lg:text-[32px]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                cancel
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-    ),
-  } as any)}
-/>
+        <Chessboard
+          key={pieceSet}
+          options={{
+            position: state.fen,
+            onPieceDrop,
+            onSquareClick,
+            boardOrientation: playerColor,
+            darkSquareStyle: { backgroundColor: theme.dark },
+            lightSquareStyle: { backgroundColor: theme.light },
+            pieces: customPieces,
+            squareStyles: customSquareStyles,
+            arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
+            allowDrawingArrows: true,
+            animationDurationInMs: 150,
+            // customSquare: ({ children, square, style }: { children?: React.ReactNode; square: string; style?: React.CSSProperties }) => (
+            //   <div
+            //     style={{ ...style, position: 'relative' }}
+            //     className={failedSquare === square ? 'border-2 border-error z-10' : ''}
+            //   >
+            //     {children}
+            //     {failedSquare === square && (
+            //       <div className="absolute top-0 right-0 z-[100] translate-x-1/4 -translate-y-1/4 animate-in fade-in zoom-in duration-200">
+            //         <div className="bg-white rounded-full flex items-center justify-center shadow-lg">
+            //           <span
+            //             className="material-symbols-outlined text-[#f25e5e] text-[22px] md:text-[28px] lg:text-[32px]"
+            //             style={{ fontVariationSettings: "'FILL' 1" }}
+            //           >
+            //             cancel
+            //           </span>
+            //         </div>
+            //       </div>
+            //     )}
+            //   </div>
+            // ),
+          }}
+        />
         {isAIThinking && (
           <div className="absolute inset-0 bg-black/10 flex items-end justify-center pb-8 pointer-events-none">
             <div className="bg-surface-container-high/90 backdrop-blur-sm border border-outline-variant rounded-full px-4 py-2 flex items-center gap-2">
