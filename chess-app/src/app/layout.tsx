@@ -8,11 +8,14 @@ import { PlayerProfileProvider } from '@/hooks/usePlayerProfile'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Grandmaster AI Chess Arena',
+  title: 'AI Chess Arena',
   description: 'Challenge state-of-the-art AI models including Gemini in the ultimate chess arena.',
   keywords: ['chess', 'AI', 'Gemini', 'chess AI', 'online chess'],
+  icons: {
+    icon: '/logo-horse.png',
+  },
   openGraph: {
-    title: 'Grandmaster AI Chess Arena',
+    title: 'AI Chess Arena',
     description: 'Play chess against cutting-edge AI models',
     type: 'website',
   },
