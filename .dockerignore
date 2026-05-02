@@ -1,0 +1,24 @@
+# Ignore git and local IDE configs
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+
+# Ignore root level files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env*
+
+# Ignore app-specific build artifacts and dependencies
+**/node_modules
+**/node_modules/
+**/.next
+**/.next/
+**/out/
+**/build/
+
+# Ignore Docker files themselves
+Dockerfile
+.dockerignore
