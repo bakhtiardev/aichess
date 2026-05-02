@@ -35,7 +35,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-1.5-flash',
     providerType: 'gemini',
-    avatarUrl: '/avatars/gemini.png',
+    avatarUrl: '/avatars/gemini-flash.png',
   },
   {
     id: 'gemini-pro',
@@ -51,7 +51,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-1.5-pro',
     providerType: 'gemini',
-    avatarUrl: '/avatars/gemini.png',
+    avatarUrl: '/avatars/gemini-pro.png',
   },
   {
     id: 'gemini-2-flash',
@@ -67,7 +67,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-2.0-flash',
     providerType: 'gemini',
-    avatarUrl: '/avatars/gemini.png',
+    avatarUrl: '/avatars/gemini-2-flash.png',
   },
 
   // ─── Groq (free API key required) ────────────────────────────────────────
@@ -87,7 +87,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
-    avatarUrl: '/avatars/gpt.png',
+    avatarUrl: '/avatars/gpt-120b.png',
   },
   {
     id: 'groq-gpt-oss-20b',
@@ -105,7 +105,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
-    avatarUrl: '/avatars/gpt.png',
+    avatarUrl: '/avatars/gpt-20b.png',
   },
   {
     id: 'groq-llama3-70b',
@@ -159,7 +159,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
-    avatarUrl: '/avatars/sage.png',
+    avatarUrl: '/avatars/qwen.png',
   },
   {
     id: 'groq-mixtral',
@@ -177,7 +177,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
-    avatarUrl: '/avatars/sage.png',
+    avatarUrl: '/avatars/mixtral.png',
   },
 
   // ─── Ollama (local, truly free) ───────────────────────────────────────────
@@ -215,6 +215,6 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'ollama',
     requiresSetup: true,
     setupNote: "Requires Ollama running locally at localhost:11434 with mistral model pulled.",
-    avatarUrl: '/avatars/sage.png',
+    avatarUrl: '/avatars/mistral-local.png',
   },
 ]
