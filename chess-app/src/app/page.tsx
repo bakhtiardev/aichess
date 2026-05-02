@@ -8,6 +8,16 @@ export const metadata: Metadata = {
   description: 'Choose your AI opponent and start a chess match.',
 }
 
+const PROVIDER_ICONS: Record<string, string> = {
+  gemini: '/icons/google-logo.png',
+  groq: '/icons/groq.png',
+  ollama: '/icons/ollama.png',
+  gpt: '/icons/chatgpt.png',
+  meta: '/icons/meta.png',
+  alibaba: '/icons/Alibaba-com.png',
+  mixtral: '/icons/mistral-color.png',
+}
+
 export default function LobbyPage() {
   return (
     <div className="flex flex-col h-full bg-background">
@@ -59,9 +69,18 @@ export default function LobbyPage() {
                       <div className="px-3 py-1 bg-primary/20 backdrop-blur-md rounded-lg border border-primary/30">
                         <span className="text-[11px] font-black text-primary tracking-tighter">LVL {Math.floor(opponent.elo / 100)}</span>
                       </div>
-                      <span className="text-[10px] font-black text-on-surface-variant/70 uppercase tracking-widest">
-                        {opponent.provider}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {PROVIDER_ICONS[opponent.providerType] && (
+                          <img
+                            src={PROVIDER_ICONS[opponent.providerType]}
+                            alt=""
+                            className="w-5 h-5 object-contain shadow-sm"
+                          />
+                        )}
+                        <span className="text-[11px] font-black text-on-surface uppercase tracking-widest group-hover:text-primary transition-colors">
+                          {opponent.provider}
+                        </span>
+                      </div>
                     </div>
                     <h3 className="text-3xl font-black text-on-surface leading-none tracking-tighter mb-2 group-hover:text-primary transition-colors">
                       {opponent.name}
