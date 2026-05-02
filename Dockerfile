@@ -10,7 +10,7 @@ WORKDIR /app
 COPY chess-app/package.json chess-app/yarn.lock* chess-app/package-lock.json* chess-app/pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f package-lock.json ]; then npm ci --legacy-peer-deps; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && npm install; \
   fi
