@@ -215,7 +215,7 @@ export default function GameClient({ modelId }: GameClientProps) {
           <Link href="/" className="text-on-surface-variant hover:text-on-surface transition-colors">
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </Link>
-          <h1 className="text-sm font-bold text-primary">Chess AI Hub</h1>
+          <h1 className="text-sm font-bold text-primary">Grandmaster AI Arena</h1>
           <span className="text-outline-variant">/</span>
           <span className="text-on-surface-variant text-sm">vs {opponent.name}</span>
         </div>
@@ -240,6 +240,7 @@ export default function GameClient({ modelId }: GameClientProps) {
             timeLeft={aiTime}
             isActive={aiIsActive}
             elo={opponent.elo}
+            avatarUrl={opponent.avatarUrl}
           />
 
           {/* Chess Board */}
@@ -255,13 +256,13 @@ export default function GameClient({ modelId }: GameClientProps) {
 
           {/* Human Player (bottom) */}
           <PlayerCard
-            name={profile.username}
+            name={profile.username || 'You'}
             isAI={false}
             isThinking={false}
             timeLeft={playerTime}
             isActive={playerIsActive && !isAIThinking}
             elo={profile.elo}
-            avatarUrl={profile.avatarUrl}
+            avatarUrl="/avatars/player.png"
           />
         </div>
 
@@ -284,6 +285,7 @@ export default function GameClient({ modelId }: GameClientProps) {
           result={gameResult}
           reason={gameResultReason}
           opponentName={opponent.name}
+          opponentAvatarUrl={opponent.avatarUrl}
           onPlayAgain={handlePlayAgain}
         />
       )}

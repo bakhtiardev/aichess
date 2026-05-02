@@ -16,6 +16,7 @@ export interface AIOpponent {
   providerType: ProviderType
   requiresSetup?: boolean
   setupNote?: string
+  avatarUrl: string
 }
 
 export const AI_OPPONENTS: AIOpponent[] = [
@@ -34,6 +35,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-1.5-flash',
     providerType: 'gemini',
+    avatarUrl: '/avatars/gemini.png',
   },
   {
     id: 'gemini-pro',
@@ -49,6 +51,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-1.5-pro',
     providerType: 'gemini',
+    avatarUrl: '/avatars/gemini.png',
   },
   {
     id: 'gemini-2-flash',
@@ -64,6 +67,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'gemini-2.0-flash',
     providerType: 'gemini',
+    avatarUrl: '/avatars/gemini.png',
   },
 
   // ─── Groq (free API key required) ────────────────────────────────────────
@@ -83,6 +87,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/gpt.png',
   },
   {
     id: 'groq-gpt-oss-20b',
@@ -100,6 +105,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/gpt.png',
   },
   {
     id: 'groq-llama3-70b',
@@ -117,6 +123,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/llama.png',
   },
   {
     id: 'groq-llama4-scout',
@@ -134,6 +141,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/scout.png',
   },
   {
     id: 'groq-qwen3-32b',
@@ -151,6 +159,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/sage.png',
   },
   {
     id: 'groq-mixtral',
@@ -168,6 +177,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'groq',
     requiresSetup: true,
     setupNote: 'Requires a free GROQ_API_KEY in .env.local — get one at console.groq.com',
+    avatarUrl: '/avatars/sage.png',
   },
 
   // ─── Ollama (local, truly free) ───────────────────────────────────────────
@@ -187,6 +197,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'ollama',
     requiresSetup: true,
     setupNote: 'Requires Ollama running locally at localhost:11434 with llama3 model pulled.',
+    avatarUrl: '/avatars/llama.png',
   },
   {
     id: 'ollama-mistral',
@@ -204,5 +215,6 @@ export const AI_OPPONENTS: AIOpponent[] = [
     providerType: 'ollama',
     requiresSetup: true,
     setupNote: "Requires Ollama running locally at localhost:11434 with mistral model pulled.",
+    avatarUrl: '/avatars/sage.png',
   },
 ]

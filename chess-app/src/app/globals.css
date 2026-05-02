@@ -68,35 +68,31 @@ html {
   background: #8c9381;
 }
 
-/* Chess board piece animation */
-@keyframes piece-appear {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+/* Animations */
+@keyframes scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 0.5; }
+  100% { transform: translateY(480px); opacity: 0; }
 }
 
-/* Thinking animation */
-@keyframes thinking-dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #9fd668, #baf381);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Card hover glow */
-.card-glow:hover {
-  box-shadow: 0 0 20px rgba(159, 214, 104, 0.08);
+.animate-scan {
+  animation: scan 3s linear infinite;
 }
 
-/* Active nav indicator */
-.nav-active {
-  background-color: #282b23;
-  color: #9fd668;
-  border-left: 4px solid #9fd668;
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
 }

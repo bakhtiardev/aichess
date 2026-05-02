@@ -6,6 +6,7 @@ interface ResultModalProps {
   result: 'win' | 'loss' | 'draw' | 'resigned'
   reason: string
   opponentName: string
+  opponentAvatarUrl?: string
   onPlayAgain: () => void
 }
 
@@ -15,55 +16,72 @@ const RESULT_CONFIG = {
     subtitle: "Brilliant chess. You've outplayed the AI!",
     color: 'text-primary',
     borderColor: 'border-primary/30',
-    bgColor: 'bg-primary/10',
+    bgColor: 'bg-primary/20',
     icon: 'emoji_events',
     iconColor: 'text-primary',
+    ringColor: 'ring-primary/40',
   },
   loss: {
     title: '♟ Defeated',
     subtitle: 'The AI had the upper hand. Study the game and try again!',
     color: 'text-error',
     borderColor: 'border-error/30',
-    bgColor: 'bg-error/10',
+    bgColor: 'bg-error/20',
     icon: 'sentiment_dissatisfied',
     iconColor: 'text-error',
+    ringColor: 'ring-error/40',
   },
   draw: {
     title: '🤝 Draw',
     subtitle: 'An equal contest. Well-played to both sides.',
     color: 'text-secondary',
     borderColor: 'border-secondary/30',
-    bgColor: 'bg-secondary/10',
+    bgColor: 'bg-secondary/20',
     icon: 'handshake',
     iconColor: 'text-secondary',
+    ringColor: 'ring-secondary/40',
   },
   resigned: {
     title: '🏳 Resigned',
     subtitle: 'You resigned. Come back stronger!',
     color: 'text-on-surface-variant',
     borderColor: 'border-outline-variant',
-    bgColor: 'bg-surface-container',
+    bgColor: 'bg-surface-container-highest',
     icon: 'flag',
     iconColor: 'text-on-surface-variant',
+    ringColor: 'ring-outline-variant/40',
   },
 }
 
-export default function ResultModal({ result, reason, opponentName, onPlayAgain }: ResultModalProps) {
+export default function ResultModal({ result, reason, opponentName, opponentAvatarUrl, onPlayAgain }: ResultModalProps) {
   const config = RESULT_CONFIG[result]
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
       <div
-        className={`bg-surface-container-high border ${config.borderColor} rounded-2xl p-8 max-w-sm w-full shadow-2xl animate-slide-up`}
+        className={`bg-surface-container-high border ${config.borderColor} rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-slide-up relative overflow-hidden`}
       >
-        {/* Icon */}
-        <div className={`w-16 h-16 mx-auto mb-5 rounded-full ${config.bgColor} border ${config.borderColor} flex items-center justify-center`}>
-          <span
-            className={`material-symbols-outlined text-3xl ${config.iconColor}`}
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            {config.icon}
-          </span>
+        {/* Background Accent */}
+        <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full ${config.bgColor} blur-3xl opacity-50`} />
+
+        {/* Avatar/Icon */}
+        <div className="relative mx-auto mb-6 w-24 h-24">
+          <div className={`w-full h-full rounded-2xl overflow-hidden ring-4 ${config.ringColor} shadow-xl transform rotate-3`}>
+            {opponentAvatarUrl ? (
+              <img src={opponentAvatarUrl} alt={opponentName} className="w-full h-full object-cover" />
+            ) : (
+              <div className={`w-full h-full flex items-center justify-center ${config.bgColor}`}>
+                 <span className={`material-symbols-outlined text-4xl ${config.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                  {config.icon}
+                </span>
+              </div>
+            )}
+          </div>
+          <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-full ${config.bgColor} border-4 border-surface-container-high flex items-center justify-center shadow-lg`}>
+             <span className={`material-symbols-outlined text-xl ${config.iconColor}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+              {config.icon}
+            </span>
+          </div>
         </div>
 
         {/* Title */}
