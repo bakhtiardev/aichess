@@ -64,7 +64,7 @@ export default function LobbyPage() {
 
 
                   {/* Minimal Info (Always Visible) */}
-                  <div className="absolute bottom-0 left-0 w-full p-8 transition-transform duration-500 group-hover:-translate-y-32 z-20">
+                  <div className="absolute bottom-0 left-0 w-full px-8 pb-2 pt-8 transition-transform duration-500 group-hover:-translate-y-32 z-20">
                     <div className="flex items-center gap-3 mb-3">
 
                       <div className="flex items-center gap-2">
