@@ -18,6 +18,42 @@ interface ChessBoardProps {
   pieceSet?: string
 }
 
+interface PieceImageProps {
+  piece: string
+  pieceSet: string
+  svgStyle?: React.CSSProperties
+}
+
+function PieceImage({ piece, pieceSet, svgStyle }: PieceImageProps) {
+  const [useFallback, setUseFallback] = useState(false)
+
+  // Try multiple CDN sources
+  const primaryUrl = `https://lichess1.org/assets/piece/${pieceSet}/${piece}.svg`
+  const fallbackUrl = `https://cdn.jsdelivr.net/gh/chess-api/chesscom-pieces@main/pieces/${pieceSet}/${piece}.svg`
+
+  const handleError = () => {
+    if (!useFallback) {
+      setUseFallback(true)
+    }
+  }
+
+  const imageUrl = useFallback ? fallbackUrl : primaryUrl
+
+  return (
+    <img
+      src={imageUrl}
+      alt={piece}
+      onError={handleError}
+      style={{
+        ...svgStyle,
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
+      }}
+    />
+  )
+}
+
 export default function ChessBoardComponent({
   gameHook,
   playerColor,
@@ -52,16 +88,7 @@ export default function ChessBoardComponent({
 
     pieceTypes.forEach(p => {
       result[p] = ({ svgStyle } = {}) => (
-        <img
-          src={`https://lichess1.org/assets/piece/${pieceSet}/${p}.svg`}
-          alt={p}
-          style={{
-            ...svgStyle,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
+        <PieceImage piece={p} pieceSet={pieceSet} svgStyle={svgStyle} />
       )
     })
     return result
