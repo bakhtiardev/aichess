@@ -95,7 +95,7 @@ export default function PlayerCard({
                   key={i}
                   src={`https://lichess1.org/assets/piece/cburnett/${side === 'top' ? 'w' : 'b'}${p.toUpperCase()}.svg`}
                   alt={p}
-                  className="w-4 h-4 opacity-80 grayscale-[0.2]"
+                  className="w-4 h-4 opacity-80 grayscale-[0.2] drop-shadow-[0_0_0.5px_#fff] drop-shadow-[0_0_0.5px_#fff]"
                 />
               ))}
             </div>

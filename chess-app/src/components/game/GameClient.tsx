@@ -292,7 +292,7 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
             timeLeft={playerTime}
             isActive={playerIsActive && !isAIThinking}
             elo={profile.elo}
-            avatarUrl="/avatars/player.png"
+            avatarUrl={profile?.avatarUrl}
             capturedPieces={bottomCaptured}
             materialAdvantage={bottomMaterial > 0 ? bottomMaterial : 0}
             side="bottom"
