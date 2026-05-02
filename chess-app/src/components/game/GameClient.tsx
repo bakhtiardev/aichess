@@ -15,9 +15,10 @@ const INITIAL_TIME = 10 * 60 // 10 minutes in seconds
 
 interface GameClientProps {
   modelId: string
+  playerColor: 'white' | 'black'
 }
 
-export default function GameClient({ modelId }: GameClientProps) {
+export default function GameClient({ modelId, playerColor }: GameClientProps) {
   const router = useRouter()
   const opponent = AI_OPPONENTS.find((o) => o.id === modelId)
   const gameHook = useChessGame()
@@ -37,8 +38,8 @@ export default function GameClient({ modelId }: GameClientProps) {
   const [aiTime, setAiTime] = useState(INITIAL_TIME)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const playerColor: 'white' | 'black' = 'white'
-  const isPlayerTurn = state.turn === 'w' && playerColor === 'white'
+  const playerColorCode = playerColor === 'white' ? 'w' : 'b'
+  const isPlayerTurn = state.turn === playerColorCode
 
   // Timer logic
   useEffect(() => {
@@ -96,10 +97,10 @@ export default function GameClient({ modelId }: GameClientProps) {
 
   // AI turn trigger
   useEffect(() => {
-    if (state.turn === 'b' && !state.isGameOver && !resigned && !isAIThinking) {
+    if (state.turn !== playerColorCode && !state.isGameOver && !resigned && !isAIThinking) {
       triggerAIMove()
     }
-  }, [state.turn, state.isGameOver, resigned])
+  }, [state.turn, state.isGameOver, resigned, playerColorCode, isAIThinking])
 
   const triggerAIMove = async () => {
     if (!opponent) return
@@ -166,10 +167,10 @@ export default function GameClient({ modelId }: GameClientProps) {
 
   const handlePlayerMove = useCallback(
     (from: string, to: string, promotion?: string): boolean => {
-      if (isAIThinking || state.turn !== 'w') return false
+      if (isAIThinking || state.turn !== playerColorCode) return false
       return makeMove(from, to, promotion)
     },
-    [isAIThinking, state.turn, makeMove]
+    [isAIThinking, state.turn, makeMove, playerColorCode]
   )
 
   const handleHint = async () => {
@@ -204,8 +205,8 @@ export default function GameClient({ modelId }: GameClientProps) {
     )
   }
 
-  const aiIsActive = state.turn === 'b' && !state.isGameOver
-  const playerIsActive = state.turn === 'w' && !state.isGameOver
+  const aiIsActive = state.turn !== playerColorCode && !state.isGameOver
+  const playerIsActive = state.turn === playerColorCode && !state.isGameOver
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
@@ -220,10 +221,10 @@ export default function GameClient({ modelId }: GameClientProps) {
           <span className="text-on-surface-variant text-sm">vs {opponent.name}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${state.turn === 'w' ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${isPlayerTurn ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
             }`}>
-            <div className={`w-2 h-2 rounded-full ${state.turn === 'w' ? 'bg-primary' : 'bg-on-surface-variant'}`} />
-            {state.turn === 'w' ? 'Your Turn' : 'AI Turn'}
+            <div className={`w-2 h-2 rounded-full ${isPlayerTurn ? 'bg-primary' : 'bg-on-surface-variant'}`} />
+            {isPlayerTurn ? 'Your Turn' : 'AI Turn'}
           </div>
         </div>
       </header>

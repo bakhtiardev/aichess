@@ -5,6 +5,7 @@ import GameClient from '@/components/game/GameClient'
 
 interface PageProps {
   params: { model: string }
+  searchParams: { color?: string }
 }
 
 export function generateMetadata({ params }: PageProps): Metadata {
@@ -23,9 +24,11 @@ export function generateStaticParams() {
   return AI_OPPONENTS.map((o) => ({ model: o.id }))
 }
 
-export default function PlayPage({ params }: PageProps) {
+export default function PlayPage({ params, searchParams }: PageProps) {
   const opponent = AI_OPPONENTS.find((o) => o.id === params.model)
   if (!opponent) notFound()
 
-  return <GameClient modelId={params.model} />
+  const playerColor = searchParams.color === 'black' ? 'black' : 'white'
+
+  return <GameClient modelId={params.model} playerColor={playerColor} />
 }

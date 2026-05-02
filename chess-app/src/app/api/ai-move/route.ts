@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Chess } from 'chess.js'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import { AI_OPPONENTS } from '@/lib/aiOpponents'
 
 // ─── Chess prompt builder ──────────────────────────────────────────────────
 
@@ -26,44 +28,54 @@ function extractMove(text: string): string {
   return ''
 }
 
-// ─── Gemini ─────────────────────────────────────────────────────────────────
+// ─── Gemini (SDK) ───────────────────────────────────────────────────────────
 
 const GEMINI_MODEL_MAP: Record<string, string> = {
-  'gemini-flash': 'gemini-1.5-flash',
-  'gemini-pro': 'gemini-1.5-pro',
+  'gemini-flash': 'gemini-2.0-flash',
+  'gemini-1.5-flash': 'gemini-2.0-flash',
+  'gemini-pro': 'gemini-2.5-pro',
+  'gemini-1.5-pro': 'gemini-2.5-pro',
   'gemini-2-flash': 'gemini-2.0-flash',
+  'gemini-2.0-flash': 'gemini-2.0-flash',
 }
 
 async function callGemini(modelId: string, prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY not configured. Add it to .env.local')
 
-  const geminiModel = GEMINI_MODEL_MAP[modelId] || 'gemini-1.5-flash'
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, maxOutputTokens: 10 },
-      }),
+  const genAI = new GoogleGenerativeAI(apiKey)
+  const modelName = GEMINI_MODEL_MAP[modelId] || 'gemini-1.5-flash'
+  const model = genAI.getGenerativeModel({ 
+    model: modelName,
+    generationConfig: { temperature: 0.3, maxOutputTokens: 10 }
+  })
+
+  try {
+    const result = await model.generateContent(prompt)
+    return result.response.text()
+  } catch (error: any) {
+    if (error.message?.includes('404')) {
+      // Fallback to -latest if the base model name fails
+      const fallbackModel = genAI.getGenerativeModel({ 
+        model: `${modelName}-latest`,
+        generationConfig: { temperature: 0.3, maxOutputTokens: 10 }
+      })
+      const result = await fallbackModel.generateContent(prompt)
+      return result.response.text()
     }
-  )
-  if (!response.ok) throw new Error(`Gemini API error: ${response.status} — ${await response.text()}`)
-  const data = await response.json()
-  return (data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim()
+    throw error
+  }
 }
 
 // ─── Groq (free API) ─────────────────────────────────────────────────────────
 
 const GROQ_MODEL_MAP: Record<string, string> = {
-  'groq-gpt-oss-120b': 'openai/gpt-4o',
-  'groq-gpt-oss-20b': 'openai/gpt-4o-mini',
+  'groq-gpt-oss-120b': 'openai/gpt-oss-120b',
+  'groq-gpt-oss-20b': 'openai/gpt-oss-20b',
   'groq-llama3-70b': 'llama-3.3-70b-versatile',
   'groq-llama4-scout': 'meta-llama/llama-4-scout-17b-16e-instruct',
   'groq-qwen3-32b': 'qwen/qwen3-32b',
-  'groq-mixtral': 'mixtral-8x7b-32768',
+  'groq-mixtral': 'llama-3.1-8b-instant',
 }
 
 async function callGroq(modelId: string, prompt: string): Promise<string> {
@@ -134,6 +146,39 @@ async function callOllama(modelId: string, prompt: string): Promise<string> {
   return (data?.response ?? '').trim()
 }
 
+// ─── Stockfish Fallback ──────────────────────────────────────────────────────
+
+async function callStockfishFallback(fen: string, modelId: string): Promise<string> {
+  const opponent = AI_OPPONENTS.find(a => a.id === modelId)
+  const elo = opponent?.elo || 1500
+  
+  // Map ELO to Stockfish depth
+  let depth = 5
+  if (elo < 1000) depth = 1
+  else if (elo < 1400) depth = 3
+  else if (elo < 1800) depth = 8
+  else if (elo < 2200) depth = 12
+  else if (elo < 2600) depth = 15
+  else depth = 18
+
+  try {
+    const url = `https://stockfish.online/api/s/v2.php?fen=${encodeURIComponent(fen)}&depth=${depth}`
+    const response = await fetch(url)
+    if (!response.ok) throw new Error('Stockfish API failed')
+    
+    const data = await response.json()
+    if (!data.success) throw new Error('Stockfish API unsuccessful')
+    
+    // bestmove e2e4 ...
+    const bestMove = data.bestmove || ''
+    const match = bestMove.match(/bestmove\s+([a-h][1-8][a-h][1-8][qrbn]?)/)
+    return match ? match[1] : ''
+  } catch (error) {
+    console.error('Stockfish fallback failed:', error)
+    return ''
+  }
+}
+
 // ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -178,14 +223,19 @@ export async function POST(req: NextRequest) {
           }
         }
       } catch (err) {
-        // On the last attempt, propagate the error so users see a clear message
-        if (attempts === 2) throw err
         console.error(`Attempt ${attempts + 1} failed:`, err)
+        // If it's the last attempt or a fatal error, we'll try Stockfish next
       }
       attempts++
     }
 
-    // Fallback: pick a random legal move
+    // Fallback: Stockfish
+    if (!chosenMove) {
+      console.log('Using Stockfish fallback...')
+      chosenMove = await callStockfishFallback(fen, modelId)
+    }
+
+    // Ultimate Fallback: pick a random legal move
     if (!chosenMove) {
       const random = legalMoves[Math.floor(Math.random() * legalMoves.length)]
       chosenMove = `${random.from}${random.to}${random.promotion || ''}`
@@ -194,9 +244,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ move: chosenMove })
   } catch (error) {
     console.error('AI move error:', error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
-      { status: 500 }
-    )
+    // Even on global error, try to return a random move instead of 500
+    try {
+      const { fen } = await req.json()
+      const chess = new Chess(fen)
+      const moves = chess.moves({ verbose: true })
+      const random = moves[Math.floor(Math.random() * moves.length)]
+      return NextResponse.json({ move: `${random.from}${random.to}${random.promotion || ''}`, error: 'Falling back to random' })
+    } catch {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Internal server error' },
+        { status: 500 }
+      )
+    }
   }
 }
