@@ -153,7 +153,7 @@ export default function ChessBoardComponent({
   )
 
   const onPieceDrop = useCallback(
-    ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string }): boolean => {
+    ({ sourceSquare, targetSquare }: { sourceSquare: any; targetSquare: any }): boolean => {
       if (!canInteract || !targetSquare) return false
       setSelectedSquare(null)
       setLegalSquares({})
