@@ -32,7 +32,7 @@ export default function ChessBoardComponent({
 }: ChessBoardProps) {
   const { state, getLegalMoves } = gameHook
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
-  const [legalSquares, setLegalSquares] = useState<Record<string, { background: string; borderRadius?: string }>>({})
+  const [legalSquares, setLegalSquares] = useState<Record<string, React.CSSProperties>>({})
   
   const THEMES: Record<string, { dark: string; light: string }> = {
     green: { dark: '#779556', light: '#ebecd0' },
@@ -104,13 +104,12 @@ export default function ChessBoardComponent({
   Object.entries(legalSquares).forEach(([sq, style]) => {
     customSquareStyles[sq] = {
       ...customSquareStyles[sq],
-      background: style.background,
-      borderRadius: style.borderRadius,
+      ...style,
     }
   })
 
   const onSquareClick = useCallback(
-    ({ square }: { square: string }) => {
+    ({ square }: { square: string; piece?: string }) => {
       if (!canInteract) return
 
       if (selectedSquare) {
@@ -127,19 +126,20 @@ export default function ChessBoardComponent({
       const moves = getLegalMoves(square)
       if (moves.length > 0) {
         setSelectedSquare(square)
-        const highlights: Record<string, { background: string; borderRadius?: string }> = {}
+        const highlights: Record<string, React.CSSProperties> = {}
         moves.forEach((sq) => {
           // Check if target square has a piece (capture)
           const piece = gameHook.game.get(sq as Square)
           if (piece) {
+            // Highlight capture squares with ring around border
             highlights[sq] = {
-              background: 'radial-gradient(circle, transparent 0%, transparent 68%, rgba(0, 0, 0, 0.18) 69%, rgba(0, 0, 0, 0.18) 100%)',
+               background: 'radial-gradient(circle, transparent 0%, transparent 68%, rgba(0, 0, 0, 0.18) 69%, rgba(0, 0, 0, 0.18) 100%)',
               borderRadius: '0',
             }
           } else {
+            // Highlight empty squares with center dot
             highlights[sq] = {
-              background: 'radial-gradient(circle, rgba(0, 0, 0, 0.18) 22%, transparent 23%)',
-              borderRadius: '0',
+              background: 'radial-gradient(circle, rgba(0, 0, 0, 0.25) 25%, transparent 25%)',
             }
           }
         })
@@ -153,7 +153,7 @@ export default function ChessBoardComponent({
   )
 
   const onPieceDrop = useCallback(
-    ({ sourceSquare, targetSquare }: { sourceSquare: string, targetSquare: string | null }): boolean => {
+    ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string }): boolean => {
       if (!canInteract || !targetSquare) return false
       setSelectedSquare(null)
       setLegalSquares({})
@@ -185,7 +185,7 @@ export default function ChessBoardComponent({
             arrows: customArrows.map(a => ({ startSquare: a.from, endSquare: a.to, color: a.color || 'rgb(255, 170, 0)' })),
             allowDrawingArrows: true,
             animationDurationInMs: 150,
-            squareRenderer: ({ children, square, style }) => (
+            customSquare: ({ children, square, style }) => (
               <div
                 style={{ ...style, position: 'relative' }}
                 className={failedSquare === square ? 'border-2 border-error z-10' : ''}
