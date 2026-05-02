@@ -24,34 +24,23 @@ interface PieceImageProps {
   svgStyle?: React.CSSProperties
 }
 
+const PIECE_IMAGE_PATHS: Record<string, string> = {
+  wP: '/chesspieces/wP.png',
+  wN: '/chesspieces/wN.png',
+  wB: '/chesspieces/wB.png',
+  wR: '/chesspieces/wR.png',
+  wQ: '/chesspieces/wQ.png',
+  wK: '/chesspieces/wK.png',
+  bP: '/chesspieces/bP.png',
+  bN: '/chesspieces/bN.png',
+  bB: '/chesspieces/bB.png',
+  bR: '/chesspieces/bR.png',
+  bQ: '/chesspieces/bQ.png',
+  bK: '/chesspieces/bK.png',
+}
+
 function PieceImage({ piece, pieceSet, svgStyle }: PieceImageProps) {
-  const [useFallback, setUseFallback] = useState(false)
-
-  // Try multiple CDN sources
-  const primaryUrl = `https://lichess1.org/assets/piece/${pieceSet}/${piece}.svg`
-  const fallbackUrl = `https://cdn.jsdelivr.net/gh/chess-api/chesscom-pieces@main/pieces/${pieceSet}/${piece}.svg`
-
-  const handleError = () => {
-    if (!useFallback) {
-      setUseFallback(true)
-    }
-  }
-
-  const imageUrl = useFallback ? fallbackUrl : primaryUrl
-
-  return (
-    <img
-      src={imageUrl}
-      alt={piece}
-      onError={handleError}
-      style={{
-        ...svgStyle,
-        width: '100%',
-        height: '100%',
-        objectFit: 'contain',
-      }}
-    />
-  )
+  return <img src={PIECE_IMAGE_PATHS[piece]} alt={piece} style={{ ...svgStyle, width: '100%', height: '100%', objectFit: 'contain' }} />
 }
 
 export default function ChessBoardComponent({
