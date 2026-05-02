@@ -10,6 +10,7 @@ import PlayerCard from '@/components/game/PlayerCard'
 import GameSidebar from '@/components/game/GameSidebar'
 import ResultModal from '@/components/game/ResultModal'
 import Link from 'next/link'
+import { getCapturedPieces } from '@/lib/capturedPieces'
 
 const INITIAL_TIME = 10 * 60 // 10 minutes in seconds
 
@@ -37,6 +38,7 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
   const [playerTime, setPlayerTime] = useState(INITIAL_TIME)
   const [aiTime, setAiTime] = useState(INITIAL_TIME)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const aiThinkingRef = useRef(false)
 
   const playerColorCode = playerColor === 'white' ? 'w' : 'b'
   const isPlayerTurn = state.turn === playerColorCode
@@ -97,14 +99,15 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
 
   // AI turn trigger
   useEffect(() => {
-    if (state.turn !== playerColorCode && !state.isGameOver && !resigned && !isAIThinking) {
+    if (state.turn !== playerColorCode && !state.isGameOver && !resigned && !isAIThinking && !aiThinkingRef.current) {
       triggerAIMove()
     }
   }, [state.turn, state.isGameOver, resigned, playerColorCode, isAIThinking])
 
   const triggerAIMove = async () => {
-    if (!opponent) return
+    if (!opponent || aiThinkingRef.current) return
     setIsAIThinking(true)
+    aiThinkingRef.current = true
     setError(null)
 
     try {
@@ -123,11 +126,14 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
 
       if (!res.ok || data.error) {
         setError(data.error || 'AI failed to respond')
-        // Make a random move as fallback
-        const legalMoves = gameHook.game.moves({ verbose: true })
-        if (legalMoves.length > 0) {
-          const random = legalMoves[Math.floor(Math.random() * legalMoves.length)]
-          makeMove(random.from, random.to, random.promotion)
+        
+        // Make a random move as fallback only if it is still AI's turn
+        if (gameHook.game.turn() !== playerColorCode) {
+          const legalMoves = gameHook.game.moves({ verbose: true })
+          if (legalMoves.length > 0) {
+            const random = legalMoves[Math.floor(Math.random() * legalMoves.length)]
+            makeMove(random.from, random.to, random.promotion)
+          }
         }
         return
       }
@@ -137,6 +143,10 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
         const from = move.substring(0, 2)
         const to = move.substring(2, 4)
         const promotion = move.length === 5 ? move[4] : undefined
+        
+        // Check if it is still the AI's turn before attempting a move
+        if (gameHook.game.turn() === playerColorCode) return
+
         const success = makeMove(from, to, promotion)
         if (!success) {
           // fallback
@@ -161,6 +171,7 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
       setError('Network error — check your connection')
       console.error(err)
     } finally {
+      aiThinkingRef.current = false
       setIsAIThinking(false)
     }
   }
@@ -208,6 +219,21 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
   const aiIsActive = state.turn !== playerColorCode && !state.isGameOver
   const playerIsActive = state.turn === playerColorCode && !state.isGameOver
 
+  const captured = getCapturedPieces(state.history)
+  // Determine which side captures which
+  const whiteCaptured = captured.w
+  const blackCaptured = captured.b
+  const materialScore = captured.score
+
+  // If player is white, they are bottom, so they get whiteCaptured
+  // If player is black, they are bottom, so they get blackCaptured
+  const bottomCaptured = playerColor === 'white' ? whiteCaptured : blackCaptured
+  const topCaptured = playerColor === 'white' ? blackCaptured : whiteCaptured
+  
+  // Material advantage from POV of bottom player
+  const bottomMaterial = playerColor === 'white' ? materialScore : -materialScore
+  const topMaterial = -bottomMaterial
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Top Bar */}
@@ -232,7 +258,7 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
       {/* Main Game Canvas */}
       <main className="flex-1 flex flex-col lg:flex-row gap-4 p-4 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
         {/* Left: Board + Player Cards */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 min-w-0 min-h-0">
+        <div className="flex-1 flex flex-col items-center justify-center gap-1.5 min-w-0 min-h-0">
           {/* AI Player (top) */}
           <PlayerCard
             name={opponent.name}
@@ -242,6 +268,9 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
             isActive={aiIsActive}
             elo={opponent.elo}
             avatarUrl={opponent.avatarUrl}
+            capturedPieces={topCaptured}
+            materialAdvantage={topMaterial > 0 ? topMaterial : 0}
+            side="top"
           />
 
           {/* Chess Board */}
@@ -264,6 +293,9 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
             isActive={playerIsActive && !isAIThinking}
             elo={profile.elo}
             avatarUrl="/avatars/player.png"
+            capturedPieces={bottomCaptured}
+            materialAdvantage={bottomMaterial > 0 ? bottomMaterial : 0}
+            side="bottom"
           />
         </div>
 
