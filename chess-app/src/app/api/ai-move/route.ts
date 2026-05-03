@@ -196,11 +196,13 @@ export async function POST(req: NextRequest) {
     const prompt = buildPrompt(fen, history, playerColor)
 
     // Route to the correct provider based on modelId prefix
-    const getResponse: () => Promise<string> = modelId.startsWith('groq-')
-      ? () => callGroq(modelId, prompt)
-      : modelId.startsWith('ollama-')
-        ? () => callOllama(modelId, prompt)
-        : () => callGemini(modelId, prompt)
+    const getResponse: () => Promise<string> = modelId.startsWith('stockfish')
+      ? () => callStockfishFallback(fen, modelId)
+      : modelId.startsWith('groq-')
+        ? () => callGroq(modelId, prompt)
+        : modelId.startsWith('ollama-')
+          ? () => callOllama(modelId, prompt)
+          : () => callGemini(modelId, prompt)
 
     let chosenMove = ''
     let attempts = 0
