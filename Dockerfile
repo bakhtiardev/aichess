@@ -21,8 +21,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 # NOTICE: Copy the chess-app contents into the builder
 COPY chess-app/ .
+COPY --from=builder /app/prisma ./prisma
 
 ENV NEXT_TELEMETRY_DISABLED 1
+# ensure Prisma client exists and the DB file is included
+ENV DATABASE_URL="file:./prisma/puzzle.db"
+RUN npx prisma generate
+# optional: create the DB file in image if not present
+RUN npx prisma db push
 
 RUN npm run build
 
@@ -46,6 +52,10 @@ RUN chown nextjs:nodejs .next
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone/ ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy Prisma DB and set DATABASE_URL for runtime
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+ENV DATABASE_URL="file:./prisma/puzzle.db"
 
 USER nextjs
 

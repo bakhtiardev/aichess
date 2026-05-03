@@ -1,0 +1,37 @@
+# Database
+prisma/puzzle.db
+prisma/puzzle.db-journal
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build
+.next/
+out/
+build/
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Testing
+.coverage
+.nyc_output

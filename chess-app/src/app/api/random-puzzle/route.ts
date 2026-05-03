@@ -1,39 +1,57 @@
 import { NextResponse } from 'next/server'
-import { Chess } from 'chess.js'
+import { PrismaClient } from '@prisma/client'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+// Create a singleton Prisma client instance
+const prisma = new (PrismaClient as any)()
 
 export async function GET() {
   try {
-    // We use Chess.com's random puzzle API and format it to match our Lichess-style interface
-    const res = await fetch('https://api.chess.com/pub/puzzle/random', {
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Grandmaster-AI-Chess-Arena/1.0 (contact: github.com/bakhtiar)'
-      },
-      cache: 'no-store' // Always get a new puzzle
-    })
+    // Get total puzzle count for randomization
+    const puzzleCount = await prisma.puzzle.count()
     
-    if (!res.ok) {
-      return NextResponse.json({ error: 'Failed to fetch from Chess.com' }, { status: res.status })
+    if (puzzleCount === 0) {
+      return NextResponse.json(
+        { error: 'No puzzles available. Please run the import script first.' },
+        { status: 503 }
+      )
+    }
+
+    // Generate a random offset and fetch a puzzle
+    const randomOffset = Math.floor(Math.random() * puzzleCount)
+    const puzzle = await prisma.puzzle.findFirst({
+      skip: randomOffset,
+    })
+
+    if (!puzzle) {
+      return NextResponse.json({ error: 'Failed to fetch puzzle' }, { status: 500 })
+    }
+
+    // Parse the solution string back to array
+    let solution: string[] = []
+    try {
+      const parsed = JSON.parse(puzzle.solution)
+      solution = Array.isArray(parsed) ? parsed.filter(m => typeof m === 'string') : []
+    } catch (e) {
+      console.warn(`Failed to parse solution for puzzle ${puzzle.id}:`, e)
+      solution = []
     }
     
-    const data = await res.json()
-    
-    // Parse the PGN to extract the UCI solution sequence
-    const chess = new Chess()
-    chess.loadPgn(data.pgn)
-    const history = chess.history({ verbose: true })
-    const solution = history.map(m => m.from + m.to + (m.promotion || ''))
+    if (solution.length === 0) {
+      return NextResponse.json({ error: 'Puzzle has no valid solution' }, { status: 500 })
+    }
 
-    // The Chess.com API doesn't return an exact ELO rating for the puzzle
-    // We can just put a placeholder or derive a random one. Let's say 1500 for now.
-    
+    // Return in Lichess-style format for backward compatibility
     const lichessStyleData = {
       puzzle: {
-        id: data.title, // using title as ID
-        rating: 1500, // Placeholder
+        id: puzzle.id,
+        rating: puzzle.rating,
+        themes: puzzle.themes ?? '',
         solution: solution,
-        fen: data.fen
-      }
+        fen: puzzle.fen,
+      },
     }
 
     return NextResponse.json(lichessStyleData)

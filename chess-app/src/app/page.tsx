@@ -4,7 +4,7 @@ import { AI_OPPONENTS } from '@/lib/aiOpponents'
 import LobbyClient from '@/components/lobby/LobbyClient'
 
 export const metadata: Metadata = {
-  title: 'Play — Grandmaster AI Chess Arena',
+  title: 'Play AI Chess Arena',
   description: 'Choose your AI opponent and start a chess match.',
 }
 
@@ -21,7 +21,7 @@ const PROVIDER_ICONS: Record<string, string> = {
 export default function LobbyPage() {
   return (
     <div className="flex flex-col h-full bg-background">
-      <TopBar title="Grandmaster AI Arena" />
+      <TopBar title="AI Chess Arena" />
 
       <main className="flex-1 overflow-y-auto p-6 md:p-12">
         <div className="max-w-7xl mx-auto">

@@ -12,9 +12,17 @@ interface LichessPuzzle {
   puzzle: {
     id: string
     rating: number
+    themes: string
     solution: string[]
     fen: string
   }
+}
+
+function tokenizeThemes(themes: string) {
+  return themes
+    .split(/\s+/)
+    .map(theme => theme.trim())
+    .filter(Boolean)
 }
 
 export default function PuzzleClient() {
@@ -31,6 +39,7 @@ export default function PuzzleClient() {
   const gameHook = useChessGame()
   const { game, state, loadFen, makeMove } = gameHook
   const { profile } = usePlayerProfile()
+  const themeTokens = tokenizeThemes(puzzle?.puzzle.themes ?? '')
 
   const fetchPuzzle = useCallback(async () => {
     setLoading(true)
@@ -131,6 +140,12 @@ export default function PuzzleClient() {
       // AI moves are at odd indices (1, 3, 5...) in Lichess solution array
       if (moveIndex % 2 === 1) {
         const nextMove = puzzle.puzzle.solution[moveIndex]
+        
+        // Guard against undefined or non-string moves
+        if (!nextMove || typeof nextMove !== 'string') {
+          return
+        }
+        
         const from = nextMove.substring(0, 2)
         const to = nextMove.substring(2, 4)
         const promotion = nextMove.length === 5 ? nextMove[4] : undefined
@@ -276,11 +291,26 @@ export default function PuzzleClient() {
               </div>
               <div className="flex justify-between items-center py-2 border-b border-outline-variant/30">
                 <span className="text-on-surface-variant text-sm">Theme</span>
-                <span className="text-on-surface font-medium text-sm">Random Tactics</span>
+                <div className="flex flex-wrap justify-end gap-2 max-w-[70%]">
+                  {themeTokens.length > 0 ? (
+                    themeTokens.map(theme => (
+                      <span
+                        key={theme}
+                        className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary"
+                      >
+                        {theme}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                      Random Tactics
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="pt-2">
                 <p className="text-xs text-on-surface-variant italic leading-relaxed">
-                  Puzzles are sourced from Chess.com. Solve them to improve your tactical awareness.
+                  Puzzles are sourced from the Lichess puzzle database. Solve them to improve your tactical awareness.
                 </p>
               </div>
             </div>
