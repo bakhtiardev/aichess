@@ -252,7 +252,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
   },
   {
     id: 'stockfish-detention',
-    name: 'SF Detention',
+    name: 'Stockfish Detention',
     shortName: 'SF Detention',
     elo: 1600,
     playstyle: 'Balanced / Precise',
@@ -268,8 +268,8 @@ export const AI_OPPONENTS: AIOpponent[] = [
   },
   {
     id: 'stockfish-mecha',
-    name: 'SF Heavy Mecha',
-    shortName: 'Heavy Mecha',
+    name: 'Stockfish Mecha',
+    shortName: 'SF Mecha',
     elo: 2100,
     playstyle: 'Solid / Defensive',
     provider: 'Engine',
