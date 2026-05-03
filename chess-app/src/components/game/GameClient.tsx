@@ -139,7 +139,7 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
       }
 
       const move = data.move as string
-      if (move && move.length >= 4) {
+      if (typeof move === 'string' && move.length >= 4) {
         const from = move.substring(0, 2)
         const to = move.substring(2, 4)
         const promotion = move.length === 5 ? move[4] : undefined

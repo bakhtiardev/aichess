@@ -51,7 +51,7 @@ export default function PuzzleClient() {
     setPendingPromotion(null)
 
     try {
-      const res = await fetch('/api/random-puzzle')
+      const res = await fetch(`/api/random-puzzle?t=${Date.now()}`)
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(errorData.error || `Server responded with ${res.status}`)
@@ -66,7 +66,9 @@ export default function PuzzleClient() {
 
       // Fix orientation to the starting side to move
       const chess = new Chess(data.puzzle.fen)
-      setOrientation(chess.turn() === 'w' ? 'white' : 'black')
+      // In Lichess puzzles, the FEN turn is the side that makes the FIRST move in the solution
+      // (the opponent's move). The player is the opposite side.
+      setOrientation(chess.turn() === 'w' ? 'black' : 'white')
     } catch (err: any) {
       setError(err.message || 'Could not load puzzle. Please try again later.')
       console.error('Puzzle loading failed:', err)
@@ -101,7 +103,7 @@ export default function PuzzleClient() {
 
     setHintMove(null)
 
-    const expectedMove = puzzle.puzzle.solution[moveIndex]
+    const expectedMove = puzzle?.puzzle?.solution?.[moveIndex]
     // UCI format: e2e4 or e7e8q
     const moveNotation = `${from}${to}${promotion ? promotion : ''}`
 
@@ -109,7 +111,7 @@ export default function PuzzleClient() {
       const success = makeMove(from, to, promotion)
       if (success) {
         const nextIndex = moveIndex + 1
-        if (nextIndex >= puzzle.puzzle.solution.length) {
+        if (nextIndex >= (puzzle?.puzzle?.solution?.length ?? 0)) {
           setStatus('solved')
         } else {
           setMoveIndex(nextIndex)
@@ -136,23 +138,29 @@ export default function PuzzleClient() {
 
   // Effect to handle AI response in the puzzle solution
   useEffect(() => {
-    if (puzzle && status === 'playing' && moveIndex < puzzle.puzzle.solution.length) {
-      // AI moves are at odd indices (1, 3, 5...) in Lichess solution array
-      if (moveIndex % 2 === 1) {
-        const nextMove = puzzle.puzzle.solution[moveIndex]
-        
+    if (puzzle && puzzle.puzzle?.solution && status === 'playing' && moveIndex < (puzzle.puzzle?.solution?.length ?? 0)) {
+      // AI moves are at EVEN indices (0, 2, 4...) in Lichess solution array
+      // The first move (index 0) is always the opponent's move.
+      if (moveIndex % 2 === 0) {
+        const solution = puzzle?.puzzle?.solution
+        const nextMove = solution?.[moveIndex]
+
         // Guard against undefined or non-string moves
-        if (!nextMove || typeof nextMove !== 'string') {
+        if (typeof nextMove !== 'string' || nextMove.length < 4) {
           return
         }
-        
+
         const from = nextMove.substring(0, 2)
         const to = nextMove.substring(2, 4)
         const promotion = nextMove.length === 5 ? nextMove[4] : undefined
 
         const timer = setTimeout(() => {
           makeMove(from, to, promotion)
-          setMoveIndex(moveIndex + 1)
+          const nextIndex = moveIndex + 1
+          if (nextIndex >= (puzzle?.puzzle?.solution?.length ?? 0)) {
+            setStatus('solved')
+          }
+          setMoveIndex(nextIndex)
         }, 600)
         return () => clearTimeout(timer)
       }
@@ -204,7 +212,7 @@ export default function PuzzleClient() {
       {/* Top Bar */}
       <TopBar
         title="Random Puzzle"
-        subtitle={puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'}
+        subtitle={puzzle?.puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'}
       />
 
       <main className="flex-1 flex flex-col lg:flex-row gap-6 p-6 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
@@ -215,7 +223,7 @@ export default function PuzzleClient() {
               gameHook={gameHook}
               playerColor={orientation}
               onPlayerMove={handlePlayerMove}
-              isAIThinking={status === 'playing' && moveIndex % 2 === 1}
+              isAIThinking={status === 'playing' && moveIndex % 2 === 0}
               thinkingText="Opponent move..."
               customArrows={hintMove ? [{ from: hintMove.from, to: hintMove.to, color: 'rgba(255, 170, 0, 0.8)' }] : undefined}
               failedSquare={failedSquare}
@@ -286,7 +294,7 @@ export default function PuzzleClient() {
               <div className="flex justify-between items-center py-2 border-b border-outline-variant/30">
                 <span className="text-on-surface-variant text-sm">Difficulty</span>
                 <span className="text-on-surface font-bold text-sm bg-surface-variant px-2 py-0.5 rounded">
-                  {puzzle?.puzzle.rating} ELO
+                  {puzzle?.puzzle?.rating} ELO
                 </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-outline-variant/30">
@@ -335,12 +343,15 @@ export default function PuzzleClient() {
             <div className="mt-8">
               <button
                 onClick={() => {
-                  if (puzzle && status === 'playing') {
-                    const nextMove = puzzle.puzzle.solution[moveIndex]
-                    setHintMove({
-                      from: nextMove.substring(0, 2),
-                      to: nextMove.substring(2, 4)
-                    })
+                  if (puzzle && status === 'playing' && moveIndex % 2 === 1) {
+                    const solution = puzzle?.puzzle?.solution
+                    const nextMove = solution?.[moveIndex]
+                    if (typeof nextMove === 'string' && nextMove.length >= 4) {
+                      setHintMove({
+                        from: nextMove.substring(0, 2),
+                        to: nextMove.substring(2, 4)
+                      })
+                    }
                   }
                 }}
                 className="w-full py-3 px-4 border border-primary/30 text-primary rounded-lg text-sm font-bold hover:bg-primary/10 transition-all flex items-center justify-center gap-2"

@@ -54,7 +54,11 @@ export async function GET() {
       },
     }
 
-    return NextResponse.json(lichessStyleData)
+    return NextResponse.json(lichessStyleData, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+      },
+    })
   } catch (error) {
     console.error('Puzzle fetch error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
