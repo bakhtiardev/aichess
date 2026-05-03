@@ -232,7 +232,7 @@ export const AI_OPPONENTS: AIOpponent[] = [
     free: true,
     modelId: 'stockfish',
     providerType: 'stockfish',
-    avatarUrl: '/avatars/stockfish.png',
+    avatarUrl: '/avatars/stockfish-villain.png',
   },
   {
     id: 'stockfish-cyber',
