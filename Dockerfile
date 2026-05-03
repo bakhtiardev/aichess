@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 # NOTICE: Copy the chess-app contents into the builder
 COPY chess-app/ .
-COPY --from=builder /app/prisma ./prisma
+# Prisma is already copied via 'COPY chess-app/ .' above
 
 ENV NEXT_TELEMETRY_DISABLED 1
 # ensure Prisma client exists and the DB file is included
