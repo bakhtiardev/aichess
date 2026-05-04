@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Chessboard } from 'react-chessboard'
 import type { Square } from 'chess.js'
 import type { UseChessGameReturn } from '@/hooks/useChessGame'
@@ -58,6 +58,8 @@ export default function ChessBoardComponent({
   const { state, getLegalMoves } = gameHook
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null)
   const [legalSquares, setLegalSquares] = useState<Record<string, React.CSSProperties>>({})
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [boardSize, setBoardSize] = useState(0)
   
   const THEMES: Record<string, { dark: string; light: string }> = {
     green: { dark: '#779556', light: '#ebecd0' },
@@ -68,6 +70,29 @@ export default function ChessBoardComponent({
   }
 
   const theme = THEMES[boardTheme] || THEMES.green
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateSize = () => {
+      const { width, height } = element.getBoundingClientRect()
+      const nextSize = Math.floor(Math.max(0, Math.min(width, height, 720)))
+      setBoardSize(nextSize)
+    }
+
+    updateSize()
+
+    const resizeObserver = new ResizeObserver(updateSize)
+    resizeObserver.observe(element)
+
+    window.addEventListener('orientationchange', updateSize)
+
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('orientationchange', updateSize)
+    }
+  }, [])
 
   const customPieces = useMemo(() => {
     if (pieceSet === 'standard') return undefined
@@ -179,10 +204,10 @@ export default function ChessBoardComponent({
   )
 
   return (
-    <div className="w-full flex-1 min-h-0 flex items-center justify-center">
+    <div ref={containerRef} className="w-full flex-1 min-h-0 flex items-center justify-center">
       <div
-        style={{ maxHeight: '720px', maxWidth: '720px' }}
-        className={`aspect-square h-full max-h-full max-w-full relative rounded-lg overflow-hidden border-4 ${state.isCheck && !state.isGameOver
+        style={boardSize > 0 ? { width: `${boardSize}px`, height: `${boardSize}px` } : { width: 'min(100%, 720px)', height: 'min(100vw, 720px)' }}
+        className={`relative rounded-lg overflow-hidden border-4 ${state.isCheck && !state.isGameOver
           ? 'border-error shadow-[0_0_30px_rgba(255,180,171,0.3)]'
           : 'border-surface-container-highest'
           } shadow-2xl transition-all duration-300`}
@@ -194,6 +219,7 @@ export default function ChessBoardComponent({
             onPieceDrop,
             onSquareClick,
             boardOrientation: playerColor,
+            boardStyle: { width: '100%', height: '100%' },
             darkSquareStyle: { backgroundColor: theme.dark },
             lightSquareStyle: { backgroundColor: theme.light },
             pieces: customPieces,

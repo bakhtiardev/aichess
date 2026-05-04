@@ -34,10 +34,10 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         />
       </head>
-      <body className={`${inter.className} bg-background text-on-background antialiased flex h-screen overflow-hidden`}>
+      <body className={`${inter.className} bg-background text-on-background antialiased flex min-h-[100dvh] overflow-hidden`}>
         <PlayerProfileProvider>
           <SideNav />
-          <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0 pb-16 md:pb-0">
+          <div className="flex-1 flex flex-col min-h-[100dvh] overflow-hidden min-w-0 pb-16 md:pb-0">
             {children}
           </div>
           <MobileNav />

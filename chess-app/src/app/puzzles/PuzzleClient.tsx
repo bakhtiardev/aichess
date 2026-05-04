@@ -208,17 +208,17 @@ export default function PuzzleClient() {
 
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col min-h-[100dvh] overflow-hidden">
       {/* Top Bar */}
       <TopBar
         title="Random Puzzle"
         subtitle={puzzle?.puzzle ? `Rating: ${puzzle.puzzle.rating}` : 'Loading...'}
       />
 
-      <main className="flex-1 flex flex-col lg:flex-row gap-6 p-6 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
+      <main className="flex-1 flex flex-col lg:flex-row gap-3 sm:gap-6 p-2.5 sm:p-4 lg:p-6 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
         {/* Left: Board */}
         <div className="flex-1 flex flex-col items-center justify-center min-w-0 min-h-0">
-          <div className="w-full max-w-[560px] md:max-w-[640px] xl:max-w-[720px] aspect-square flex-shrink-0 shadow-2xl relative">
+          <div className="w-full max-w-[520px] sm:max-w-[560px] md:max-w-[640px] xl:max-w-[720px] flex-shrink-0 shadow-2xl relative">
             <ChessBoardComponent
               gameHook={gameHook}
               playerColor={orientation}
@@ -284,8 +284,8 @@ export default function PuzzleClient() {
         </div>
 
         {/* Right: Info */}
-        <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-4">
-          <div className="bg-surface-container-low rounded-xl border border-outline-variant p-6 shadow-sm">
+        <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-3 sm:gap-4">
+          <div className="bg-surface-container-low rounded-xl border border-outline-variant p-3 sm:p-6 shadow-sm">
             <h2 className="text-label-bold font-bold text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-base">extension</span>
               Puzzle Info
@@ -324,7 +324,7 @@ export default function PuzzleClient() {
             </div>
           </div>
 
-          <div className="bg-primary/5 rounded-xl border border-primary/20 p-6 flex-1">
+          <div className="bg-primary/5 rounded-xl border border-primary/20 p-3 sm:p-6 flex-1">
             <h3 className="font-bold text-on-surface mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-xl">lightbulb</span>
               Goal
@@ -333,7 +333,7 @@ export default function PuzzleClient() {
               Find the best sequence of moves to solve the puzzle. Be careful, only the most precise moves will work!
             </p>
 
-            <div className={`py-3 px-4 rounded-lg flex items-center justify-center gap-3 font-bold shadow-sm border ${orientation === 'white'
+            <div className={`py-3 px-4 rounded-lg flex items-center justify-center gap-3 font-bold shadow-sm border text-sm sm:text-base ${orientation === 'white'
               ? 'bg-surface-container-low border-outline-variant text-on-surface'
               : 'bg-[#2b2b2b] border-[#404040] text-white'
               }`}>

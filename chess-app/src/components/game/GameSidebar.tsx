@@ -36,12 +36,12 @@ export default function GameSidebar({
   const lastMoveIndex = moveHistory.length - 1
 
   return (
-    <aside className="w-full lg:w-80 flex-shrink-0 bg-surface-container-low rounded-lg border border-outline-variant flex flex-col overflow-hidden shadow-sm h-full min-h-[300px]">
+    <aside className="w-full lg:w-80 flex-shrink-0 bg-surface-container-low rounded-lg border border-outline-variant flex flex-col overflow-hidden shadow-sm h-full min-h-[220px] max-h-[36rem] lg:max-h-[calc(100dvh-6rem)] lg:sticky lg:top-4">
       {/* Move History */}
       <div className="flex flex-col flex-1 overflow-hidden border-b border-outline-variant">
-        <div className="px-4 py-3 border-b border-outline-variant bg-surface-container-high flex justify-between items-center">
-          <h3 className="text-label-bold font-bold text-on-surface uppercase tracking-wider">Move History</h3>
-          <div className="flex gap-0.5">
+        <div className="px-3 py-2 sm:px-4 sm:py-3 border-b border-outline-variant bg-surface-container-high flex justify-between items-center gap-2">
+          <h3 className="text-[11px] sm:text-label-bold font-bold text-on-surface uppercase tracking-wider truncate">Move History</h3>
+          <div className="flex gap-0.5 shrink-0">
             {(['first_page', 'navigate_before', 'navigate_next', 'last_page'] as const).map((icon) => (
               <button
                 key={icon}
@@ -53,7 +53,7 @@ export default function GameSidebar({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2 text-body-sm">
+        <div className="flex-1 overflow-y-auto p-2 text-[11px] sm:text-body-sm">
           {movePairs.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-on-surface-variant text-xs">Make your first move!</p>
@@ -62,20 +62,20 @@ export default function GameSidebar({
             movePairs.map((pair, idx) => (
               <div
                 key={pair.num}
-                className={`flex items-center text-xs rounded-sm ${
+                className={`grid grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)] items-center rounded-sm gap-1 ${
                   idx % 2 === 0 ? 'bg-surface-container' : ''
                 }`}
               >
-                <span className="w-8 px-2 py-1.5 text-on-surface-variant font-mono">{pair.num}.</span>
+                <span className="px-1.5 py-1.5 text-on-surface-variant font-mono">{pair.num}.</span>
                 <span
-                  className={`w-20 px-1 py-1.5 rounded cursor-pointer hover:bg-surface-variant transition-colors ${
+                  className={`min-w-0 px-1 py-1 rounded cursor-pointer hover:bg-surface-variant transition-colors truncate ${
                     lastMoveIndex === idx * 2 ? 'bg-primary text-on-primary font-semibold' : 'text-on-surface'
                   }`}
                 >
                   {pair.white}
                 </span>
                 <span
-                  className={`w-20 px-1 py-1.5 rounded cursor-pointer hover:bg-surface-variant transition-colors ${
+                  className={`min-w-0 px-1 py-1 rounded cursor-pointer hover:bg-surface-variant transition-colors truncate ${
                     lastMoveIndex === idx * 2 + 1 ? 'bg-primary text-on-primary font-semibold' : 'text-on-surface'
                   }`}
                 >
@@ -88,7 +88,7 @@ export default function GameSidebar({
       </div>
 
       {/* AI Insights */}
-      <div className="p-4 flex flex-col gap-3">
+      <div className="p-2.5 sm:p-4 flex flex-col gap-2.5">
         <h3 className="text-label-bold font-bold text-primary flex items-center gap-2">
           <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
             smart_toy
@@ -127,7 +127,7 @@ export default function GameSidebar({
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
             onClick={onHint}
             disabled={isAIThinking || isGameOver}

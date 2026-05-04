@@ -235,16 +235,16 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
   const topMaterial = -bottomMaterial
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col min-h-[100dvh] overflow-hidden">
       {/* Top Bar */}
-      <header className="flex justify-between items-center h-14 px-6 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10">
-        <div className="flex items-center gap-3">
+      <header className="flex flex-wrap justify-between items-center gap-2 h-auto min-h-14 px-4 sm:px-6 py-3 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link href="/" className="text-on-surface-variant hover:text-on-surface transition-colors">
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </Link>
-          <h1 className="text-sm font-bold text-primary">Grandmaster AI Arena</h1>
+          <h1 className="text-sm font-bold text-primary truncate">Grandmaster AI Arena</h1>
           <span className="text-outline-variant">/</span>
-          <span className="text-on-surface-variant text-sm">vs {opponent.name}</span>
+          <span className="text-on-surface-variant text-xs sm:text-sm truncate max-w-[11rem] sm:max-w-none">vs {opponent.name}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${isPlayerTurn ? 'bg-primary/15 text-primary border border-primary/30' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant'
@@ -256,9 +256,9 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
       </header>
 
       {/* Main Game Canvas */}
-      <main className="flex-1 flex flex-col lg:flex-row gap-4 p-4 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
+      <main className="flex-1 flex flex-col lg:flex-row gap-2.5 sm:gap-4 p-2.5 sm:p-4 bg-background overflow-y-auto lg:overflow-hidden min-h-0">
         {/* Left: Board + Player Cards */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-1.5 min-w-0 min-h-0">
+        <div className="flex-1 flex flex-col items-center justify-center gap-1.5 sm:gap-2 min-w-0 min-h-0">
           {/* AI Player (top) */}
           <PlayerCard
             name={opponent.name}
@@ -300,16 +300,18 @@ export default function GameClient({ modelId, playerColor }: GameClientProps) {
         </div>
 
         {/* Right: Sidebar */}
-        <GameSidebar
-          moveHistory={state.history}
-          aiInsight={aiInsight}
-          isAIThinking={isAIThinking}
-          onHint={handleHint}
-          onResign={handleResign}
-          onNewGame={handlePlayAgain}
-          isGameOver={state.isGameOver || resigned}
-          error={error}
-        />
+        <div className="w-full lg:w-auto mt-2 lg:mt-0">
+          <GameSidebar
+            moveHistory={state.history}
+            aiInsight={aiInsight}
+            isAIThinking={isAIThinking}
+            onHint={handleHint}
+            onResign={handleResign}
+            onNewGame={handlePlayAgain}
+            isGameOver={state.isGameOver || resigned}
+            error={error}
+          />
+        </div>
       </main>
 
       {/* Result Modal */}

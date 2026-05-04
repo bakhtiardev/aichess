@@ -34,8 +34,8 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
 
   return (
     <>
-      <header className="flex justify-between items-center h-14 px-4 md:px-6 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10 relative">
-        <div className="flex items-center gap-2 md:gap-3">
+      <header className="flex flex-wrap items-center justify-between gap-3 h-auto min-h-14 px-4 md:px-6 py-3 md:py-0 w-full bg-surface-container border-b border-outline-variant flex-shrink-0 z-10 relative">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
           <div className="md:hidden w-8 h-8 relative flex-shrink-0 flex items-center justify-center">
             <Image
               src="/logo.png"
@@ -45,21 +45,21 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
               sizes="32px"
             />
           </div>
-          <h1 className="text-lg font-bold text-primary truncate">{title}</h1>
+          <h1 className="text-base sm:text-lg font-bold text-primary truncate">{title}</h1>
           {subtitle && (
             <>
-              <span className="text-outline-variant">/</span>
-              <span className="text-on-surface-variant text-sm">{subtitle}</span>
+              <span className="hidden sm:inline text-outline-variant">/</span>
+              <span className="text-on-surface-variant text-xs sm:text-sm truncate max-w-[14rem] sm:max-w-none">{subtitle}</span>
             </>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high relative">
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+          <button className="hidden sm:flex text-on-surface-variant hover:text-on-surface transition-colors p-1.5 rounded-lg hover:bg-surface-container-high relative">
             <span className="material-symbols-outlined text-xl">notifications</span>
             <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full border border-surface-container"></span>
           </button>
 
-          <div className="h-4 w-px bg-outline-variant mx-1"></div>
+          <div className="hidden sm:block h-4 w-px bg-outline-variant mx-1"></div>
 
           {profile.chessComUsername ? (
             <div className="relative">
@@ -75,7 +75,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
                     <span className="material-symbols-outlined text-[14px] text-on-primary">person</span>
                   </div>
                 )}
-                <span className="text-xs font-bold text-on-surface hidden sm:inline-block pr-1">{profile.chessComUsername}</span>
+                <span className="text-xs font-bold text-on-surface hidden md:inline-block pr-1">{profile.chessComUsername}</span>
                 <span className="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
               </button>
 
@@ -132,7 +132,7 @@ export default function TopBar({ title = 'Chess AI Hub', subtitle }: TopBarProps
           ) : (
             <button
               onClick={() => setShowSyncModal(true)}
-              className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-primary/20"
+              className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-colors px-2.5 sm:px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-primary/20"
             >
               <span className="material-symbols-outlined text-sm">sync</span>
               <span className="hidden sm:inline">Connect Chess.com</span>
